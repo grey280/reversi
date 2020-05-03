@@ -17,7 +17,7 @@ final class HelloWorldModel: Encodable {
     
     private static let formatter: DateFormatter = {
         let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US")
+//        f.locale = Locale(identifier: "en_US")
         f.dateFormat = "HH:mm' on 'yyyy-MM-dd"
         return f
     }()
