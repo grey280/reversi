@@ -5,4 +5,8 @@
 //  Created by Grey Patterson on 5/3/20.
 //
 
-import Foundation
+import Vapor
+
+final class HelloWorldModel: Encodable {
+    let time = Date()
+}
