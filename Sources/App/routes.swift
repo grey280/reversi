@@ -2,8 +2,8 @@ import Fluent
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get { req in
-        return req.view.render("index", HelloWorldModel())
+    app.get { req  in
+        req.view.render("index", HelloWorldModel())
     }
 
     app.get("hello") { req -> String in
