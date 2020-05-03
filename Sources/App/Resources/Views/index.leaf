@@ -1,5 +1,5 @@
 #extend("base"):
-    #export("title", "Welcome")
+    #export("title", "Hello, World!")
     #export("body"):
         <h1>Hello, world!</h1>
         <p>This was rendered by Vapor at #(formattedTime).</p>
