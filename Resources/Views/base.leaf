@@ -11,7 +11,9 @@
         <title>#import("title")</title>
   </head>
   <body>
+    <div class="container">
       #import("body")
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
