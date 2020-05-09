@@ -12,7 +12,7 @@
 				</div>
 				<div class="btn-group ml-auto" role="group">
 					<a class="btn btn-outline-primary btn-lg" href="./about" role="button">About</a>
-				<a class="btn btn-outline-primary btn-lg" href="https://en.wikipedia.org/wiki/Reversi#Rules" role="button">Rules</a>
+				<a class="btn btn-outline-primary btn-lg" href="https://en.wikipedia.org/wiki/Reversi\#Rules" role="button">Rules</a>
 			</div>
 		</div>
 	</div>
