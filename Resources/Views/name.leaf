@@ -1,0 +1,21 @@
+#extend("base"):
+#export("title", "Reversi - What's your name?")
+#export("body"):
+<div class="row">
+	<div class="col">
+		<div class="card">
+			<h1>But first...</h1>
+			<div class="card-body">
+				<p>What's your name?</p>
+				<form>
+					<div class="form-group">
+						<label for="name">Name</label>
+						<input type="text" class="form-control" id="name" placeholder="Alice">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+#endexport
+#endextend

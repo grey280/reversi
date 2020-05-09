@@ -8,6 +8,9 @@ func routes(_ app: Application) throws {
     app.get("about") { req in
         req.view.render("about")
     }
+    app.get("name") { req in
+        req.view.render("name")
+    }
 
     app.get("hello") { req -> String in
         return "Hello, world!"
