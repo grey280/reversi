@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col">
 		<div class="card">
-			<h1>But first...</h1>
+			<h1 class="card-header">But first...</h1>
 			<div class="card-body">
 				<p>What's your name?</p>
 				<form>
@@ -13,6 +13,9 @@
 						<input type="text" class="form-control" id="name" placeholder="Alice">
 					</div>
 				</form>
+			</div>
+			<div class="card-footer text-right">
+				<button type="submit" class="btn btn-primary">That's me!</button>
 			</div>
 		</div>
 	</div>
