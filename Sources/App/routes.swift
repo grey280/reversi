@@ -3,7 +3,7 @@ import Vapor
 
 func routes(_ app: Application) throws {
     app.get { req  in
-        req.view.render("index", HelloWorldModel())
+        req.view.render("index")
     }
 
     app.get("hello") { req -> String in
