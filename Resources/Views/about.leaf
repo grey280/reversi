@@ -1,0 +1,32 @@
+#extend("base"):
+#export("title", "About")
+#export("body"):
+<div class="row mb-2">
+	<div class="col">
+		<div class="card">
+			<h1 class="card-header">About Reversi</h1>
+			<div class="card-body">
+				<p>This is an online version of Reversi, created as part of a course on programming at the University of California, Irvine's <a href="https://mhcid.ics.uci.edu/" target="_blank">Master's of Human-Computer Interaction and Design</a> program.</p>
+				<p>It includes a basic chat functionality, which is <em>entirely unmoderated</em>, so use it at your own risk. If it becomes a noticeable problem, I'll 'solve' it by taking the server down.</p>
+			</div>
+			<div class="card-footer">
+				<a href="./" class="btn btn-primary" role="button">Back to Home</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-4">
+		<img src="https://cdn.twoeighty.net/static/grey-2020.jpeg" class="img-fluid mb-2" title="Photo of Grey">
+	</div>
+	<div class="col-md-8">
+		<div class="card">
+			<h2 class="card-header">Hi!</h2>
+			<div class="card-body">
+				<p>My name is Grey Patterson, and I built this site on <a href="https://vapor.codes" target="_blank">Vapor 4</a> and <a href="https://heroku.com" target="_blank">Heroku</a>. You can check out <a href="https://github.com/grey280/reversi/" target="_blank">the source code</a>, or <a href="https://greypatterson.me" target="_blank">my site</a>, if you'd like.</p>
+			</div>
+		</div>
+	</div>
+</div>
+#endexport
+#endextend
