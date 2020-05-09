@@ -3,13 +3,15 @@
 #export("body"):
 <div class="row">
 	<div class="col">
-		<div class="jumbotron">
+		<div class="jumbotron mt-4">
 			<h1 class="display-4">Reversi</h1>
 			<p class="lead">A strategy game for two players. Invented in 1883; now with support for The Internet.</p>
 			<a class="btn btn-primary btn-lg" href="./name" role="button">Let's Play!</a>
 			<hr class="my-4">
-			<a class="btn btn-outline-primary btn-lg" href="./about" role="button">About</a>
-			<a class="btn btn-outline-primary btn-lg" href="https://en.wikipedia.org/wiki/Reversi#Rules" role="button">Rules</a>
+			<div class="text-right">
+				<a class="btn btn-outline-primary btn-lg" href="./about" role="button">About</a>
+				<a class="btn btn-outline-primary btn-lg ml-2" href="https://en.wikipedia.org/wiki/Reversi#Rules" role="button">Rules</a>
+			</div>
 		</div>
 	</div>
 </div>
