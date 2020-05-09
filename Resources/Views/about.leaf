@@ -10,7 +10,14 @@
 				<p>It includes a basic chat functionality, which is <em>entirely unmoderated</em>, so use it at your own risk. If it becomes a noticeable problem, I'll 'solve' it by taking the server down.</p>
 			</div>
 			<div class="card-footer">
-				<a href="./" class="btn btn-primary" role="button">Back to Home</a>
+				<div class="btn-toolbar">
+					<div class="btn-group" role="group">
+						<a href="./" class="btn btn-primary" role="button">Back to Home</a>
+					</div>
+					<div class="btn-group ml-auto" role="group">
+						<a class="btn btn-outline-primary" href="https://en.wikipedia.org/wiki/Reversi\#Rules" role="button">Rules</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
