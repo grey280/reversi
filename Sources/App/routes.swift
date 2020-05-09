@@ -5,6 +5,9 @@ func routes(_ app: Application) throws {
     app.get { req  in
         req.view.render("index")
     }
+    app.get("about") { req in
+        req.view.render("about")
+    }
 
     app.get("hello") { req -> String in
         return "Hello, world!"
