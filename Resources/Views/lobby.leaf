@@ -30,31 +30,40 @@
 		</div>
 	</div>
 </div>
-<!--<script>
+<div class="row">
+	<div class="col">
+		<div class="card">
+			<div class="card-body">
+				<button onClick="forceConnect()">forceConnect()</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	const username = '#(username)';
+	console.log('username is ' + username);
 	const url = `ws://${window.location.host}/socket`;
 	console.log(url);
 	var socket = new WebSocket(url);
 	socket.onmessage = (e) => {
 		console.log(e.data);
 	}
-</script> -->
-<script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
-<script>
-	var username = #(username);
 
-	var socket = io(window.location.host, { path: '/socket', transports: ['websocket'] });
-	socket.on('connect', () => {
-		socket.emit('joinRoom', {
+	function forceConnect(){
+		console.log('forceConnect')
+		var joinRoomCommand = {
+			command: 'joinRoom',
 			room: 'default',
 			username: username
-		})
-	})
-	socket.on('event', (data) => {
-		console.log('event', data)
-	})
-	socket.on('disconnect', () => {
-		console.log('disconnected')
-	})
-</script>
+		}
+		var text = JSON.stringify(joinRoomCommand)
+		console.log(text);
+		socket.send(text)
+	}
+
+	socket.onopen = () => {
+		forceConnect()
+	}
+</script> 
 #endexport
 #endextend
