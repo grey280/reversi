@@ -30,17 +30,17 @@
 		</div>
 	</div>
 </div>
-<script>
+<!--<script>
 	const url = `ws://${window.location.host}/socket`;
 	console.log(url);
 	var socket = new WebSocket(url);
 	socket.onmessage = (e) => {
 		console.log(e.data);
 	}
-</script>
-<!-- <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+</script> -->
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
 <script>
-	var socket = io(window.location.host, { path: '/socket' });
+	var socket = io(window.location.host, { path: '/socket', transports: ['websocket'] });
 	socket.on('connect', () => {
 		console.log('connected')
 	})
@@ -50,6 +50,6 @@
 	socket.on('disconnect', () => {
 		console.log('disconnected')
 	})
-</script> -->
+</script>
 #endexport
 #endextend
