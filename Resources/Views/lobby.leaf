@@ -22,7 +22,7 @@
 					<div class="input-group mb-3">
 						<input type="text" class="form-control" placeholder="Message..." aria-label="Chat message" aria-describedby="sendButton">
 						<div class="input-group-append">
-							<button class="btn btn-outline-secondary" type="button" id="sendButton">Send</button>
+							<button class="btn btn-outline-primary" type="button" id="sendButton">Send</button>
 						</div>
 					</div>
 				</form>
