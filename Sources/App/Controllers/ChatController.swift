@@ -6,9 +6,13 @@
 //
 
 import Vapor
+import Combine
 
 struct ChatController {
     private let decoder = JSONDecoder()
+    private static var rooms: [String: PassthroughSubject<ChatEvent, Never>] = [:]
+    
+    private var subscriptions: [AnyCancellable] = []
     
     func socket(_ req: Request, _ ws: WebSocket) -> () {
         print("Socket connected")
@@ -19,7 +23,18 @@ struct ChatController {
             guard let command = self.parseCommand(text) else {
                 return
             }
-            
+            switch command {
+            case .joinRoom(let room, let username):
+                let chatRoom: PassthroughSubject<ChatEvent, Never>
+                if ChatController.rooms[room] == nil {
+                    ChatController.rooms[room] = PassthroughSubject<ChatEvent, Never>()
+                }
+                chatRoom = ChatController.rooms[room]!
+                ChatController.rooms[room]?.send(.userJoined(name: username))
+                let foo = ChatController.rooms[room]?.sink(receiveValue: { (event) in
+                    
+                })
+            }
         }
     }
     
