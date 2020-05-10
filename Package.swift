@@ -1,7 +1,7 @@
 // swift-tools-version:5.2
 import PackageDescription
 
-let dependencies: [Package.Dependency] = [
+var dependencies: [Package.Dependency] = [
     // 💧 A server-side Swift web framework.
     .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-rc"),
     .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0-rc"),
