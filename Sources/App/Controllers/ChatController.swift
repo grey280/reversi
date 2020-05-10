@@ -7,6 +7,7 @@
 
 import Vapor
 import Combine
+import Ink
 
 class ChatRoom {
     let queue = PassthroughSubject<ChatEvent, Never>()
@@ -20,6 +21,7 @@ class ChatRoom {
 class ChatController {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
+    private let markdownParser = MarkdownParser()
     private static var rooms: [String: ChatRoom] = [:]
     
     private var subscriptions: [AnyCancellable] = []
@@ -74,8 +76,8 @@ class ChatController {
                     print("User attempted to send a message without first joining a room.")
                     return
                 }
-                // TODO: Parse the message - want to handle markdown!
-                room.queue.send(.message(username: userName, body: message))
+                let body = self.markdownParser.html(from: message)
+                room.queue.send(.message(username: userName, body: body))
             }
         }
     }
