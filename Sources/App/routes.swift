@@ -15,7 +15,8 @@ func routes(_ app: Application) throws {
         guard let name: String = req.query["username"], name != "" else {
             return req.view.render("lobby", User(username: "Anonymous_\(Int.random(in: 1..<100))"))
         }
-        return req.view.render("lobby", User(username: name))
+        let safeName = name.replacingOccurrences(of: "'", with: "")
+        return req.view.render("lobby", User(username: safeName))
     }
 
     app.get("hello") { req -> String in
