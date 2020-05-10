@@ -4,19 +4,19 @@
 <div class="row">
 	<div class="col">
 		<div class="card">
-			<h1 class="card-header">But first...</h1>
-			<div class="card-body">
-				<p>What's your name?</p>
-				<form>
+			<form action="./lobby" method="get">
+				<h1 class="card-header">But first...</h1>
+				<div class="card-body">
+					<p>What's your name?</p>
 					<div class="form-group">
-						<label for="name">Name</label>
-						<input type="text" class="form-control" id="name" placeholder="Alice">
+						<label for="name">Username</label>
+						<input type="text" class="form-control" id="username" name="username" placeholder="Alice">
 					</div>
-				</form>
-			</div>
-			<div class="card-footer text-right">
-				<button type="submit" class="btn btn-primary">That's me!</button>
-			</div>
+				</div>
+				<div class="card-footer text-right">
+					<button type="submit" class="btn btn-primary">That's me!</button>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
