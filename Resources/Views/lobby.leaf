@@ -14,8 +14,10 @@
 	<div class="col-md-4">
 		<div class="card">
 			<h1 class="card-header">Chat</h1>
-			<div class="card-body overflow-auto" id="chatBox">
-				<p>(Coming soon!)
+			<div class="card-body overflow-auto">
+				<div class="list-group list-group-flush" id="chatBox">
+					<!-- content to be provided by javascript -->
+				</div>
 			</div>
 			<div class="card-footer">
 				<div class="input-group mb-3">
@@ -39,19 +41,14 @@
 	socket.onmessage = (e) => {
 		console.log(e.data);
 		const res = JSON.parse(e.data);
-		let appendResult = "";
+		const chatBox = document.getElementById('chatBox');
 		switch (res.type){
 			case 'userJoined':
-				appendResult = `<b>${res.username}</b> joined the chat.`;
+				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.username}</strong> joined the chat.</p></div>`;
 				break;
 			case 'message':
-				appendResult = `<b>${res.username}</b>: ${res.message}`;
-				break;
-			default:
-				return; // don't do anything
+				chatBox.innerHTML += `<div class="list-group-item"><h5 class="mb-1"><strong>${res.username}</strong>:</5>${res.message}</div>`;
 		}
-		const chatBox = document.getElementById('chatBox');
-		chatBox.innerHTML += `<p>${appendResult}</p>`
 		console.log('handled')
 	}
 
