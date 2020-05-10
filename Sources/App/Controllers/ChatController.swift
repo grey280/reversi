@@ -39,11 +39,13 @@ class ChatController {
             }
         }
         ws.onText { (ws, text) in
+            print("Command received!")
             guard let command = self.parseCommand(text) else {
                 return
             }
             switch command {
             case .joinRoom(let room, let username):
+                print("Chat: \(username) requested to join \(room)")
                 let chatRoom: ChatRoom
                 if ChatController.rooms[room] == nil {
                     ChatController.rooms[room] = ChatRoom()
@@ -51,6 +53,7 @@ class ChatController {
                 chatRoom = ChatController.rooms[room]!
                 chatRoom.queue.send(.userJoined(name: username))
                 let subscription = chatRoom.queue.sink(receiveValue: { (event) in
+                    print("Chat: sending event to \(username)")
                     if let res = self.codableAsString(event) {
                         ws.send(res)
                     }
