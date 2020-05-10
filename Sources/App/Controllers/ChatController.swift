@@ -26,8 +26,17 @@ class ChatController {
     
     func socket(_ req: Request, _ ws: WebSocket) -> () {
         print("Socket connected")
+        var userName: String? = nil
+        var joinedChatRoom: String? = nil
          ws.onClose.whenComplete { (res) in
             print("Socket disconnected")
+            if let roomName = joinedChatRoom, let user = userName {
+                guard let room = ChatController.rooms[roomName] else {
+                    print("User \(user) was in room \(roomName), but room was not found")
+                    return
+                }
+                room.users.remove(user)
+            }
         }
         ws.onText { (ws, text) in
             guard let command = self.parseCommand(text) else {
@@ -52,6 +61,8 @@ class ChatController {
                     return
                 }
                 ws.send(asString)
+                userName = username
+                joinedChatRoom = room
             }
         }
     }
