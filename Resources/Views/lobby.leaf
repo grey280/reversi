@@ -39,9 +39,22 @@
 	console.groupEnd();
 	var socket = new WebSocket(url);
 	socket.onmessage = (e) => {
-		const chatBox = document.getElementById('chatBox');
-		chatBox.innerHTML += `<p>${e.data}</p>`
 		console.log(e.data);
+		const res = JSON.parse(e.data);
+		let appendResult = "";
+		switch (res.type){
+			case 'userJoined':
+				appendResult = `<b>${res.username}</b> joined the chat.`;
+				break;
+			case 'message':
+				appendResult = `<b>${res.username}</b>: ${res.message}`;
+				break;
+			default:
+				return; // don't do anything
+		}
+		const chatBox = document.getElementById('chatBox');
+		chatBox.innerHTML += `<p>${appendResult}</p>`
+		console.log('handled')
 	}
 
 	socket.onopen = () => {

@@ -8,14 +8,14 @@
 import Foundation
 
 enum ChatEvent{
-    case userJoined(name: String)
-    case message(body: String)
+    case userJoined(username: String)
+    case message(username: String, body: String)
 }
 
 extension ChatEvent: Codable {
     fileprivate enum CodingKeys: String, CodingKey {
         case type
-        case name
+        case username
         case message
     }
     
@@ -25,22 +25,24 @@ extension ChatEvent: Codable {
         switch type {
         case .message:
             let message = try container.decode(String.self, forKey: .message)
-            self = .message(body: message)
+            let name = try container.decode(String.self, forKey: .username)
+            self = .message(username: name, body: message)
         case .userJoined:
-            let name = try container.decode(String.self, forKey: .name)
-            self = .userJoined(name: name)
+            let name = try container.decode(String.self, forKey: .username)
+            self = .userJoined(username: name)
         }
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
-        case .message(let body):
+        case .message(let username, let body):
             try container.encode(ChatEventType.message.rawValue, forKey: .type)
+            try container.encode(username, forKey: .username)
             try container.encode(body, forKey: .message)
         case .userJoined(let name):
             try container.encode(ChatEventType.userJoined.rawValue, forKey: .type)
-            try container.encode(name, forKey: .name)
+            try container.encode(name, forKey: .username)
         }
     }
     

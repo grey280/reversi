@@ -29,13 +29,15 @@ class ChatController {
         var userName: String? = nil
         var joinedChatRoom: String? = nil
          ws.onClose.whenComplete { (res) in
-            print("Socket disconnected")
+            print("Socket disconnected.")
             if let roomName = joinedChatRoom, let user = userName {
                 guard let room = ChatController.rooms[roomName] else {
                     print("User \(user) was in room \(roomName), but room was not found")
                     return
                 }
                 room.users.remove(user)
+            } else {
+                print("Unable to determine room or user name; nothing to do")
             }
         }
         ws.onText { (ws, text) in
@@ -51,7 +53,7 @@ class ChatController {
                     ChatController.rooms[room] = ChatRoom()
                 }
                 chatRoom = ChatController.rooms[room]!
-                chatRoom.queue.send(.userJoined(name: username))
+                chatRoom.queue.send(.userJoined(username: username))
                 let subscription = chatRoom.queue.sink(receiveValue: { (event) in
                     print("Chat: sending event to \(username)")
                     if let res = self.codableAsString(event) {
