@@ -12,7 +12,7 @@ func routes(_ app: Application) throws {
         req.view.render("name")
     }
     app.get("lobby") { req -> EventLoopFuture<View> in
-        guard let name: String = req.query["username"] else {
+        guard let name: String = req.query["username"], name != "" else {
             return req.view.render("lobby", User(username: "Anonymous_\(Int.random(in: 1..<100))"))
         }
         return req.view.render("lobby", User(username: name))
