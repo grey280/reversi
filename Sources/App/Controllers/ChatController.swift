@@ -53,10 +53,10 @@ class ChatController {
         }
     }
     
-    private func parseEvent(_ event: ChatEvent) -> String? {
+    private func codableAsString<T: Encodable>(_ input: T) -> String? {
         do {
-            let foo = try encoder.encode(event)
-            return String(bytes: foo, encoding: .utf8)
+            let data = try encoder.encode(input)
+            return String(bytes: data, encoding: .utf8)
         } catch {
             print(error.localizedDescription)
             return nil
