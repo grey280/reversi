@@ -9,8 +9,17 @@ var dependencies: [Package.Dependency] = [
     .package(url: "https://github.com/vapor/leaf.git", from: "4.0.0-rc"),
     .package(name: "Ink", url: "https://github.com/johnsundell/ink.git", from: "0.1.0"),
 ]
+var targetDependencies: [Target.Dependency] = [
+    .product(name: "Fluent", package: "fluent"),
+    .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
+    .product(name: "Vapor", package: "vapor"),
+    .product(name: "Leaf", package: "leaf"),
+    "Ink"
+]
+
 #if os(Linux)
 dependencies.append(.package(url: "https://github.com/broadwaylamb/OpenCombine.git", from: "0.8.0"))
+targetDependencies.append("OpenCombine")
 #endif
 
 let package = Package(
@@ -20,13 +29,7 @@ let package = Package(
     ],
     dependencies: dependencies,
     targets: [
-        .target(name: "App", dependencies: [
-            .product(name: "Fluent", package: "fluent"),
-            .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
-            .product(name: "Vapor", package: "vapor"),
-            .product(name: "Leaf", package: "leaf"),
-            "Ink"
-        ]),
+        .target(name: "App", dependencies: targetDependencies),
         .target(name: "Run", dependencies: ["App"]),
         .testTarget(name: "AppTests", dependencies: [
             .target(name: "App"),
