@@ -33,6 +33,7 @@
 				<p>My name is Grey Patterson, and I built this site on <a href="https://vapor.codes" target="_blank">Vapor 4</a> and <a href="https://heroku.com" target="_blank">Heroku</a>. You can check out <a href="https://github.com/grey280/reversi/" target="_blank">the source code</a>, or <a href="https://greypatterson.me" target="_blank">my site</a>, if you'd like.</p>
 				<hr>
 				<p>The HTML here is mostly <a href="https://getbootstrap.com" target="_blank">Bootstrap</a>, themed with <a href="https://bootswatch.com" target="_blank">Bootswatch</a>.</p>
+				<p>Some of the chat processing relies on John Sundell's <a href="https://github.com/JohnSundell/Ink" target="_blank">Ink</a> - <a href="https://daringfireball.net/projects/markdown/" target="_blank">markdown</a>, it's neat!</p>
 			</div>
 		</div>
 	</div>
