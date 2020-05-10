@@ -39,6 +39,8 @@
 	console.groupEnd();
 	var socket = new WebSocket(url);
 	socket.onmessage = (e) => {
+		const chatBox = document.getElementById('chatBox');
+		chatBox.innerHTML += `<p>${e.data}</p>`
 		console.log(e.data);
 	}
 
