@@ -17,10 +17,10 @@ var targetDependencies: [Target.Dependency] = [
     "Ink"
 ]
 
-#if os(Linux)
+//#if os(Linux)
 dependencies.append(.package(name: "OpenCombine", url: "https://github.com/broadwaylamb/OpenCombine.git", from: "0.8.0"))
 targetDependencies.append("OpenCombine")
-#endif
+//#endif
 
 let package = Package(
     name: "reversi",

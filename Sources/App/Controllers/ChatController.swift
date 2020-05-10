@@ -6,11 +6,11 @@
 //
 
 import Vapor
-#if os(macOS)
-import Combine
-#else
+//#if os(macOS)
+//import Combine
+//#else
 import OpenCombine
-#endif
+//#endif
 import Ink
 
 class ChatRoom {
