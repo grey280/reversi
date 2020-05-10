@@ -32,7 +32,10 @@
 </div>
 <script>
 	const username = '#(username)';
-	const url = `ws://${window.location.host}/socket`;
+	let url = `ws://${window.location.host}/socket`;
+	if (window.location.hostname != 'localhost'){
+		url = url.replace('ws://', 'wss://') // can't use WSS when running locally, but on Heroku, it's fine
+	}
 	console.group('Socket Setup')
 	console.log('Username is ' + username)
 	console.log('Connecting to ' + url)
@@ -79,7 +82,7 @@
 			command: 'sendMessage',
 			messageBody: textBox.value
 		}
-		console.log('sending message: ' + messageBody);
+		console.log('sending message: ', messageBody);
 		var text = JSON.stringify(messageBody)
 		socket.send(text);
 		textBox.value = "";
