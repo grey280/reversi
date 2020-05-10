@@ -8,8 +8,9 @@
 import Vapor
 import Combine
 
-struct ChatController {
+class ChatController {
     private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
     private static var rooms: [String: PassthroughSubject<ChatEvent, Never>] = [:]
     
     private var subscriptions: [AnyCancellable] = []
@@ -30,10 +31,14 @@ struct ChatController {
                     ChatController.rooms[room] = PassthroughSubject<ChatEvent, Never>()
                 }
                 chatRoom = ChatController.rooms[room]!
-                ChatController.rooms[room]?.send(.userJoined(name: username))
-                let foo = ChatController.rooms[room]?.sink(receiveValue: { (event) in
-                    
+                chatRoom.send(.userJoined(name: username))
+                let subscription = chatRoom.sink(receiveValue: { (event) in
+                    if let res = self.parseEvent(event) {
+                        ws.send(res)
+                    }
                 })
+                self.subscriptions.append(subscription)
+                let result: JoinRoomResponse = .success(room: room, username: username, membership: <#T##Int#>)
             }
         }
     }
@@ -42,6 +47,16 @@ struct ChatController {
         do {
             let jsonData = Data(text.utf8)
             return try decoder.decode(ChatCommand.self, from: jsonData)
+        } catch {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+    
+    private func parseEvent(_ event: ChatEvent) -> String? {
+        do {
+            let foo = try encoder.encode(event)
+            return String(bytes: foo, encoding: .utf8)
         } catch {
             print(error.localizedDescription)
             return nil
