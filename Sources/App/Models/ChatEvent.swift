@@ -39,7 +39,7 @@ extension ChatEvent: Codable {
             try container.encode(ChatEventType.message.rawValue, forKey: .type)
             try container.encode(body, forKey: .message)
         case .userJoined(let name):
-            try container.encode(ChatEventType.message.rawValue, forKey: .type)
+            try container.encode(ChatEventType.userJoined.rawValue, forKey: .type)
             try container.encode(name, forKey: .name)
         }
     }
