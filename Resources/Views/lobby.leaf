@@ -35,7 +35,7 @@
 	const url = `ws://${window.location.host}/socket`;
 	console.group('Socket Setup')
 	console.log('Username is ' + username)
-	console.log('Connecting to ' _ url)
+	console.log('Connecting to ' + url)
 	console.groupEnd();
 	var socket = new WebSocket(url);
 	socket.onmessage = (e) => {
