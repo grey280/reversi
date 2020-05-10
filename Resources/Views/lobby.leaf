@@ -6,6 +6,7 @@
 		<div class="card">
 			<h1 class="card-header">Lobby</h1>
 			<div class="card-body">
+				<h2>Hello, #(username)!</h2>
 				<p>(Coming soon!)</p>
 			</div>
 		</div>
@@ -14,7 +15,7 @@
 		<div class="card">
 			<h1 class="card-header">Chat</h1>
 			<div class="card-body overflow-auto" id="chatBox">
-
+				<p>(Coming soon!)
 			</div>
 			<div class="card-footer">
 				<form>

@@ -11,8 +11,9 @@ func routes(_ app: Application) throws {
     app.get("name") { req in
         req.view.render("name")
     }
-    app.get("lobby") { req in
-        req.view.render("lobby")
+    app.get("lobby", ":username") { req -> EventLoopFuture<View> in
+        let name = req.parameters.get("username") ?? "Anonymous_\(Int.random(in: 1..<100))"
+        return req.view.render("lobby", User(username: name))
     }
 
     app.get("hello") { req -> String in
