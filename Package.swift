@@ -18,7 +18,7 @@ var targetDependencies: [Target.Dependency] = [
 ]
 
 #if os(Linux)
-dependencies.append(.package(url: "https://github.com/broadwaylamb/OpenCombine.git", from: "0.8.0"))
+dependencies.append(.package(name: "OpenCombine", url: "https://github.com/broadwaylamb/OpenCombine.git", from: "0.8.0"))
 targetDependencies.append("OpenCombine")
 #endif
 
