@@ -21,6 +21,13 @@ func routes(_ app: Application) throws {
     app.get("hello") { req -> String in
         return "Hello, world!"
     }
+    
+    app.webSocket("socket") { req, ws in
+        print("Socket connected")
+        ws.onClose.whenComplete { (res) in
+            print("Socket disconnected")
+        }
+    }
 
 //    let todoController = TodoController()
 //    app.get("todos", use: todoController.index)
