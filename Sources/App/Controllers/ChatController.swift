@@ -8,10 +8,19 @@
 import Vapor
 import Combine
 
+class ChatRoom {
+    let queue = PassthroughSubject<ChatEvent, Never>()
+    var users: Set<String> = []
+    
+    var userCount: Int {
+        users.count
+    }
+}
+
 class ChatController {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
-    private static var rooms: [String: PassthroughSubject<ChatEvent, Never>] = [:]
+    private static var rooms: [String: ChatRoom] = [:]
     
     private var subscriptions: [AnyCancellable] = []
     
@@ -26,19 +35,23 @@ class ChatController {
             }
             switch command {
             case .joinRoom(let room, let username):
-                let chatRoom: PassthroughSubject<ChatEvent, Never>
+                let chatRoom: ChatRoom
                 if ChatController.rooms[room] == nil {
-                    ChatController.rooms[room] = PassthroughSubject<ChatEvent, Never>()
+                    ChatController.rooms[room] = ChatRoom()
                 }
                 chatRoom = ChatController.rooms[room]!
-                chatRoom.send(.userJoined(name: username))
-                let subscription = chatRoom.sink(receiveValue: { (event) in
-                    if let res = self.parseEvent(event) {
+                chatRoom.queue.send(.userJoined(name: username))
+                let subscription = chatRoom.queue.sink(receiveValue: { (event) in
+                    if let res = self.codableAsString(event) {
                         ws.send(res)
                     }
                 })
                 self.subscriptions.append(subscription)
-                let result: JoinRoomResponse = .success(room: room, username: username, membership: <#T##Int#>)
+                let result: JoinRoomResponse = .success(room: room, username: username, membership: chatRoom.userCount)
+                guard let asString = self.codableAsString(result) else {
+                    return
+                }
+                ws.send(asString)
             }
         }
     }
