@@ -7,6 +7,13 @@ on:
     branches: [ master ]
 
 jobs:
+  clang:
+   runs-on: ubuntu-latest
+   container:
+     image: "swift:5.2"
+   steps:
+     - name: clang
+       run: clang --version
   build:
 
     runs-on: ubuntu-latest
