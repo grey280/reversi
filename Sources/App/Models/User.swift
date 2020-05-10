@@ -5,4 +5,8 @@
 //  Created by Grey Patterson on 5/9/20.
 //
 
-import Foundation
+import Vapor
+
+struct User: Encodable {
+    let username: String
+}
