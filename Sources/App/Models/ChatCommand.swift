@@ -44,4 +44,5 @@ extension ChatCommand: Codable {
     }
     
 }
+
 extension ChatCommand.CommandType: Codable { }
