@@ -35,6 +35,7 @@ class ChatController {
                     print("User \(user) was in room \(roomName), but room was not found")
                     return
                 }
+                print("\(user) left \(roomName)")
                 room.users.remove(user)
             } else {
                 print("Unable to determine room or user name; nothing to do")
