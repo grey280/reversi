@@ -18,14 +18,12 @@
 				<p>(Coming soon!)
 			</div>
 			<div class="card-footer">
-				<form>
-					<div class="input-group mb-3">
-						<input type="text" class="form-control" placeholder="Message..." aria-label="Chat message" aria-describedby="sendButton">
-						<div class="input-group-append">
-							<button class="btn btn-outline-primary" type="button" id="sendButton">Send</button>
-						</div>
+				<div class="input-group mb-3">
+					<input id="textBox" type="text" class="form-control" placeholder="Message..." aria-label="Chat message" aria-describedby="sendButton">
+					<div class="input-group-append">
+						<button class="btn btn-outline-primary" type="button" id="sendButton" onClick="sendMessage()">Send</button>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -68,6 +66,27 @@
 		console.log('converting object to JSON:', joinRoomCommand, text)
 		socket.send(text)
 		console.groupEnd();
+
+		document.getElementById('textBox').onkeydown = (e) => {
+			if (e.keyCode == 13){
+				sendMessage()
+				e.preventDefault()
+			}
+		}
+	}
+
+	function sendMessage(){
+		const textBox = document.getElementById('textBox');
+		if (!textBox.value) return; // no blank messages, thanks
+		var messageBody = {
+			command: 'sendMessage',
+			messageBody: textBox.value
+		}
+		console.log('sending message: ' + messageBody);
+		var text = JSON.stringify(messageBody)
+		socket.send(text);
+		textBox.value = "";
+		return false;
 	}
 </script> 
 #endexport
