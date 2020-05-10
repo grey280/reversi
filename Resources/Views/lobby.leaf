@@ -30,39 +30,29 @@
 		</div>
 	</div>
 </div>
-<div class="row">
-	<div class="col">
-		<div class="card">
-			<div class="card-body">
-				<button onClick="forceConnect()">forceConnect()</button>
-			</div>
-		</div>
-	</div>
-</div>
 <script>
 	const username = '#(username)';
-	console.log('username is ' + username);
 	const url = `ws://${window.location.host}/socket`;
-	console.log(url);
+	console.group('Socket Setup')
+	console.log('Username is ' + username)
+	console.log('Connecting to ' _ url)
+	console.groupEnd();
 	var socket = new WebSocket(url);
 	socket.onmessage = (e) => {
 		console.log(e.data);
 	}
 
-	function forceConnect(){
-		console.log('forceConnect')
+	socket.onopen = () => {
+		console.group('Socket.onOpen');
 		var joinRoomCommand = {
 			command: 'joinRoom',
 			room: 'default',
 			username: username
 		}
 		var text = JSON.stringify(joinRoomCommand)
-		console.log(text);
+		console.log('converting object to JSON:', joinRoomCommand, text)
 		socket.send(text)
-	}
-
-	socket.onopen = () => {
-		forceConnect()
+		console.groupEnd();
 	}
 </script> 
 #endexport
