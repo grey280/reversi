@@ -11,6 +11,9 @@ func routes(_ app: Application) throws {
     app.get("name") { req in
         req.view.render("name")
     }
+    app.get("lobby") { req in
+        req.view.render("lobby")
+    }
 
     app.get("hello") { req -> String in
         return "Hello, world!"
