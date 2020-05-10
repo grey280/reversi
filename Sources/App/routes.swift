@@ -22,12 +22,8 @@ func routes(_ app: Application) throws {
         return "Hello, world!"
     }
     
-    app.webSocket("socket") { req, ws in
-        print("Socket connected")
-        ws.onClose.whenComplete { (res) in
-            print("Socket disconnected")
-        }
-    }
+    let chat = ChatController()
+    app.webSocket("socket", onUpgrade: chat.socket)
 
 //    let todoController = TodoController()
 //    app.get("todos", use: todoController.index)
