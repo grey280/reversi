@@ -69,6 +69,13 @@ class ChatController {
                 ws.send(asString)
                 userName = username
                 joinedChatRoom = room
+            case .sendMessage(let message):
+                guard let userName = userName, let roomName = joinedChatRoom, let room = ChatController.rooms[roomName] else {
+                    print("User attempted to send a message without first joining a room.")
+                    return
+                }
+                // TODO: Parse the message - want to handle markdown!
+                room.queue.send(.message(username: userName, body: message))
             }
         }
     }
