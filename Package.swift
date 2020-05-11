@@ -22,6 +22,7 @@ let package = Package(
             .product(name: "Vapor", package: "vapor"),
             .product(name: "Leaf", package: "leaf"),
             //"Ink",
+            .product(name: "OpenCombine". package: "OpenCombine")
             //"OpenCombine"
         ]),
         .target(name: "Run", dependencies: ["App"]),
