@@ -6,11 +6,11 @@
 //
 
 import Vapor
-import OpenCombine
+//import OpenCombine
 import Ink
 
 class ChatRoom {
-    let queue = PassthroughSubject<ChatEvent, Never>()
+    //let queue = PassthroughSubject<ChatEvent, Never>()
     var users: Set<String> = []
     
     var userCount: Int {
@@ -24,7 +24,7 @@ class ChatController {
     private let markdownParser = MarkdownParser()
     private static var rooms: [String: ChatRoom] = [:]
     
-    private var subscriptions: [AnyCancellable] = []
+    //private var subscriptions: [AnyCancellable] = []
     
     func socket(_ req: Request, _ ws: WebSocket) -> () {
         print("Socket connected")
@@ -57,13 +57,13 @@ class ChatController {
                 }
                 chatRoom = ChatController.rooms[room]!
                 chatRoom.queue.send(.userJoined(username: username))
-                let subscription = chatRoom.queue.sink(receiveValue: { (event) in
+                /*let subscription = chatRoom.queue.sink(receiveValue: { (event) in
                     print("Chat: sending event to \(username)")
                     if let res = self.codableAsString(event) {
                         ws.send(res)
                     }
                 })
-                self.subscriptions.append(subscription)
+                self.subscriptions.append(subscription)*/
                 let result: JoinRoomResponse = .success(room: room, username: username, membership: chatRoom.userCount)
                 guard let asString = self.codableAsString(result) else {
                     return
@@ -77,7 +77,7 @@ class ChatController {
                     return
                 }
                 let body = self.markdownParser.html(from: message)
-                room.queue.send(.message(username: userName, body: body))
+                //room.queue.send(.message(username: userName, body: body))
             }
         }
     }
