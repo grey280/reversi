@@ -7,7 +7,7 @@
 
 import Vapor
 //import OpenCombine
-import Ink
+//import Ink
 
 class ChatRoom {
     //let queue = PassthroughSubject<ChatEvent, Never>()
@@ -21,7 +21,7 @@ class ChatRoom {
 class ChatController {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
-    private let markdownParser = MarkdownParser()
+    //private let markdownParser = MarkdownParser()
     private static var rooms: [String: ChatRoom] = [:]
     
     //private var subscriptions: [AnyCancellable] = []
@@ -76,7 +76,7 @@ class ChatController {
                     print("User attempted to send a message without first joining a room.")
                     return
                 }
-                let body = self.markdownParser.html(from: message)
+                //let body = self.markdownParser.html(from: message)
                 //room.queue.send(.message(username: userName, body: body))
             }
         }
