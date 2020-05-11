@@ -56,8 +56,8 @@ class ChatController {
                     ChatController.rooms[room] = ChatRoom()
                 }
                 chatRoom = ChatController.rooms[room]!
-                chatRoom.queue.send(.userJoined(username: username))
-                /*let subscription = chatRoom.queue.sink(receiveValue: { (event) in
+                /*chatRoom.queue.send(.userJoined(username: username))
+                let subscription = chatRoom.queue.sink(receiveValue: { (event) in
                     print("Chat: sending event to \(username)")
                     if let res = self.codableAsString(event) {
                         ws.send(res)
