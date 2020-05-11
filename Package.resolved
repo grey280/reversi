@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/vapor/fluent-kit.git",
         "state": {
           "branch": null,
-          "revision": "36d8ba6d026ac3363f5cd4d158fe7d082741bdab",
-          "version": "1.0.0-rc.1.25"
+          "revision": "c73570c85d6661c04b8ea29a9f8eede67f6d4aae",
+          "version": "1.0.0-rc.1.26"
         }
       },
       {
@@ -53,6 +53,15 @@
           "branch": null,
           "revision": "2df7722d2bddc470a9b7080b8d88c9976f237a81",
           "version": "2.0.0-rc.2"
+        }
+      },
+      {
+        "package": "Ink",
+        "repositoryURL": "https://github.com/johnsundell/ink.git",
+        "state": {
+          "branch": null,
+          "revision": "878fd897945500be1885f2c88f81f8f909224796",
+          "version": "0.4.0"
         }
       },
       {
@@ -71,6 +80,15 @@
           "branch": null,
           "revision": "6e579ba3b9497a8e85d3a7a506fe0c943799037c",
           "version": "1.0.0-rc.1.6"
+        }
+      },
+      {
+        "package": "OpenCombine",
+        "repositoryURL": "https://github.com/broadwaylamb/OpenCombine.git",
+        "state": {
+          "branch": null,
+          "revision": "1496bab2724bf6f794cba8ac4d97d2a5013eeba7",
+          "version": "0.8.0"
         }
       },
       {
@@ -150,8 +168,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "e876fb37410e0036b98b5361bb18e6854739572b",
-          "version": "2.16.0"
+          "revision": "40bdad80882d307abe2c0bb36cf3bd4d3e03fe04",
+          "version": "2.16.1"
         }
       },
       {
@@ -186,8 +204,8 @@
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
           "branch": null,
-          "revision": "c70d45fe9cce525df5b5f4793a232596cd85484b",
-          "version": "4.5.0"
+          "revision": "74bbf36fe0378fafe5413762affe8db6b871a380",
+          "version": "4.5.1"
         }
       },
       {

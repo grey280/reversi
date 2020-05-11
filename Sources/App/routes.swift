@@ -12,15 +12,19 @@ func routes(_ app: Application) throws {
         req.view.render("name")
     }
     app.get("lobby") { req -> EventLoopFuture<View> in
-        guard let name: String = req.query["username"] else {
+        guard let name: String = req.query["username"], name != "" else {
             return req.view.render("lobby", User(username: "Anonymous_\(Int.random(in: 1..<100))"))
         }
-        return req.view.render("lobby", User(username: name))
+        let safeName = name.replacingOccurrences(of: "'", with: "")
+        return req.view.render("lobby", User(username: safeName))
     }
 
     app.get("hello") { req -> String in
         return "Hello, world!"
     }
+    
+    let chat = ChatController()
+    app.webSocket("socket", onUpgrade: chat.socket)
 
 //    let todoController = TodoController()
 //    app.get("todos", use: todoController.index)

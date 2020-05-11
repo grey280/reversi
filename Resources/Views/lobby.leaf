@@ -14,21 +14,77 @@
 	<div class="col-md-4">
 		<div class="card">
 			<h1 class="card-header">Chat</h1>
-			<div class="card-body overflow-auto" id="chatBox">
-				<p>(Coming soon!)
+			<div class="card-body overflow-auto">
+				<div class="list-group list-group-flush" id="chatBox">
+					<!-- content to be provided by javascript -->
+				</div>
 			</div>
 			<div class="card-footer">
-				<form>
-					<div class="input-group mb-3">
-						<input type="text" class="form-control" placeholder="Message..." aria-label="Chat message" aria-describedby="sendButton">
-						<div class="input-group-append">
-							<button class="btn btn-outline-primary" type="button" id="sendButton">Send</button>
-						</div>
+				<div class="input-group mb-3">
+					<input id="textBox" type="text" class="form-control" placeholder="Message..." aria-label="Chat message" aria-describedby="sendButton">
+					<div class="input-group-append">
+						<button class="btn btn-outline-primary" type="button" id="sendButton" onClick="sendMessage()">Send</button>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
+<script>
+	const username = '#(username)';
+	const url = `ws://${window.location.host}/socket`;
+	console.group('Socket Setup')
+	console.log('Username is ' + username)
+	console.log('Connecting to ' + url)
+	console.groupEnd();
+	var socket = new WebSocket(url);
+	socket.onmessage = (e) => {
+		console.log(e.data);
+		const res = JSON.parse(e.data);
+		const chatBox = document.getElementById('chatBox');
+		switch (res.type){
+			case 'userJoined':
+				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.username}</strong> joined the chat.</p></div>`;
+				break;
+			case 'message':
+				chatBox.innerHTML += `<div class="list-group-item"><h5 class="mb-1"><strong>${res.username}</strong>:</5>${res.message}</div>`;
+		}
+		console.log('handled')
+	}
+
+	socket.onopen = () => {
+		console.group('Socket.onOpen');
+		var joinRoomCommand = {
+			command: 'joinRoom',
+			room: 'default',
+			username: username
+		}
+		var text = JSON.stringify(joinRoomCommand)
+		console.log('converting object to JSON:', joinRoomCommand, text)
+		socket.send(text)
+		console.groupEnd();
+
+		document.getElementById('textBox').onkeydown = (e) => {
+			if (e.keyCode == 13){
+				sendMessage()
+				e.preventDefault()
+			}
+		}
+	}
+
+	function sendMessage(){
+		const textBox = document.getElementById('textBox');
+		if (!textBox.value) return; // no blank messages, thanks
+		var messageBody = {
+			command: 'sendMessage',
+			messageBody: textBox.value
+		}
+		console.log('sending message: ' + messageBody);
+		var text = JSON.stringify(messageBody)
+		socket.send(text);
+		textBox.value = "";
+		return false;
+	}
+</script> 
 #endexport
 #endextend
