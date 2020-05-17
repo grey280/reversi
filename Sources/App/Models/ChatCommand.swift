@@ -28,10 +28,10 @@ extension ChatCommand: Codable {
             self = .sendMessage(message: body)
         case .invite:
             let user = try container.decode(ChatUser.self, forKey: .user)
-            self = .invite(user)
+            self = .invite(user: user)
         case .uninvite:
             let user = try container.decode(ChatUser.self, forKey: .user)
-            self = .uninvite(user)
+            self = .uninvite(user: user)
         }
     }
     
