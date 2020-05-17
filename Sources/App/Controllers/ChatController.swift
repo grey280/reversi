@@ -110,11 +110,10 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                 chatRoom.queue.send(.userJoined(user: asUser))
                 let subscription = chatRoom.queue.sink(receiveValue: { (event) in
                     switch (event){
-                    case .privateMessage(let fromUser, let toUser, _):
+                    case .privateMessage(let fromUser, let toUser, _), .invite(from: let fromUser, to: let toUser), .uninvite(from: let fromUser, to: let toUser):
                         guard toUser == user || fromUser == user, let res = self.codableAsString(event) else {
                             return // not for you!
                         }
-                        print("Chat: sending private message to \(username)")
                         ws.send(res)
                     default:
                         print("Chat: sending event to \(username)")
