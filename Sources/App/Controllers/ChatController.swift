@@ -60,6 +60,18 @@ class ChatController {
             let combined = "Users in the room: \n\n\(members)"
             let body = self.markdownParser.html(from: combined)
             room.queue.send(.privateMessage(from: .system, to: user, body: body))
+        } else if message.starts(with: "/help"){
+            let help = """
+Available commands:
+
+* `/list`: see users in the room
+* `/help`: see this help message
+* `/pm {username}`: send a private message to `{username}`
+
+You can format your text using [Markdown](https://daringfireball.net/projects/markdown/).
+"""
+            let body = self.markdownParser.html(from: help)
+            room.queue.send(.privateMessage(from: .system, to: user, body: body))
         } else {
             let body = self.markdownParser.html(from: message)
             room.queue.send(.message(user: user, body: body))
