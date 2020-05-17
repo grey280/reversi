@@ -10,6 +10,7 @@ import Foundation
 enum ChatEvent{
     case userJoined(user: ChatUser)
     case message(user: ChatUser, body: String)
+    case privateMessage(from: ChatUser, to: ChatUser, body: String)
     case userLeft(user: ChatUser)
 }
 
@@ -17,6 +18,7 @@ extension ChatEvent: Codable {
     fileprivate enum CodingKeys: String, CodingKey {
         case type
         case user
+        case toUser
         case message
     }
     
@@ -34,6 +36,10 @@ extension ChatEvent: Codable {
         case .userLeft:
             let user = try container.decode(ChatUser.self, forKey: .user)
             self = .userLeft(user: user)
+        case .privateMessage:
+            let fromUser = try container.decode(ChatUser.self, forKey: .user)
+            let toUser = try container.decode(ChatUser.self, forKey: .toUser)
+            let body = try container.decode(String.self. forKey: .body)
         }
     }
     
@@ -50,12 +56,18 @@ extension ChatEvent: Codable {
         case .userLeft(let user):
             try container.encode(ChatEventType.userLeft.rawValue, forKey: .type)
             try container.encode(user, forKey: .user)
+        case .privateMessage(let fromUser, let toUser, let body)
+            try container.encode(ChatEventType.privateMessage.rawValue, forKey: .type)
+            try container.encode(fromUser, forKey: .user)
+            try container.encode(toUser, forKey: .toUser)
+            try container.encode(body, forKey: .message)
         }
     }
     
     fileprivate enum ChatEventType: String, Codable {
         case userJoined
         case message
+        case privateMessage
         case userLeft
     }
 }
