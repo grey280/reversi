@@ -29,6 +29,8 @@ class ChatController {
             if (room.userCount == 0){
                 print("Room \(roomName) is empty; removing.")
                 ChatController.rooms.removeValue(forKey: roomName)
+            } else {
+                room.queue.send(.userLeft(user: user))
             }
         } else {
             print("Unable to determine room or user name; nothing to do")
