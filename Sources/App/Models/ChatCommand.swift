@@ -10,6 +10,8 @@ import Foundation
 enum ChatCommand {
     case joinRoom(room: String, username: String)
     case sendMessage(message: String)
+    case invite(user: ChatUser)
+    case uninvite(user: ChatUser)
 }
 
 extension ChatCommand: Codable {
@@ -24,6 +26,12 @@ extension ChatCommand: Codable {
         case .sendMessage:
             let body = try container.decode(String.self, forKey: .messageBody)
             self = .sendMessage(message: body)
+        case .invite:
+            let user = try container.decode(ChatUser.self, forKey: .user)
+            self = .invite(user)
+        case .uninvite:
+            let user = try container.decode(ChatUser.self, forKey: .user)
+            self = .uninvite(user)
         }
     }
     
@@ -37,6 +45,12 @@ extension ChatCommand: Codable {
         case .sendMessage(let message):
             try container.encode(CommandType.sendMessage.rawValue, forKey: .command)
             try container.encode(message, forKey: .messageBody)
+        case .invite(let user):
+            try container.encode(CommandType.invite.rawValue, forKey: .command)
+            try container.encode(user, forKey: .user)
+        case .uninvite(let user):
+            try container.encode(CommandType.uninvite.rawValue, forKey: .command)
+            try container.encode(user, forKey: .user)
         }
     }
     
@@ -45,11 +59,14 @@ extension ChatCommand: Codable {
         case room
         case username
         case messageBody
+        case user
     }
     
     fileprivate enum CommandType: String {
         case joinRoom
         case sendMessage
+        case invite
+        case uninvite
     }
     
 }
