@@ -47,48 +47,49 @@ class ChatController {
             print("Unable to determine room or user name; nothing to do")
         }
     }
+    private func routeCommand(_ ws: WebSocket, _ text: String){
+        print("Command received")
+        guard let command = self.parseCommand(text) else {
+            print("Unable to parse command.")
+            return
+        }
+        switch command {
+        case .joinRoom(let room, let username):
+            print("Chat: \(username) requested to join \(room)")
+            let chatRoom: ChatRoom
+            if ChatController.rooms[room] == nil {
+                ChatController.rooms[room] = ChatRoom()
+            }
+            chatRoom = ChatController.rooms[room]!
+            chatRoom.queue.send(.userJoined(username: username))
+            let subscription = chatRoom.queue.sink(receiveValue: { (event) in
+                print("Chat: sending event to \(username)")
+                if let res = self.codableAsString(event) {
+                    ws.send(res)
+                }
+            })
+            self.subscriptions.append(subscription)
+            let result: JoinRoomResponse = .success(room: room, username: username, membership: chatRoom.userCount)
+            guard let asString = self.codableAsString(result) else {
+                return
+            }
+            ws.send(asString)
+            self.userName = username
+            self.joinedChatRoom = room
+        case .sendMessage(let message):
+            guard let userName = self.userName, let roomName = self.joinedChatRoom, let room = ChatController.rooms[roomName] else {
+                print("User attempted to send a message without first joining a room.")
+                return
+            }
+            let body = self.markdownParser.html(from: message)
+            room.queue.send(.message(username: userName, body: body))
+        }
+    }
     
     func socket(_ req: Request, _ ws: WebSocket) -> () {
         print("Socket connected")
-        
         ws.onClose.whenComplete(onDisconnect(_:))
-        ws.onText { (ws, text) in
-            print("Command received!")
-            guard let command = self.parseCommand(text) else {
-                return
-            }
-            switch command {
-            case .joinRoom(let room, let username):
-                print("Chat: \(username) requested to join \(room)")
-                let chatRoom: ChatRoom
-                if ChatController.rooms[room] == nil {
-                    ChatController.rooms[room] = ChatRoom()
-                }
-                chatRoom = ChatController.rooms[room]!
-                chatRoom.queue.send(.userJoined(username: username))
-                let subscription = chatRoom.queue.sink(receiveValue: { (event) in
-                    print("Chat: sending event to \(username)")
-                    if let res = self.codableAsString(event) {
-                        ws.send(res)
-                    }
-                })
-                self.subscriptions.append(subscription)
-                let result: JoinRoomResponse = .success(room: room, username: username, membership: chatRoom.userCount)
-                guard let asString = self.codableAsString(result) else {
-                    return
-                }
-                ws.send(asString)
-                self.userName = username
-                self.joinedChatRoom = room
-            case .sendMessage(let message):
-                guard let userName = self.userName, let roomName = self.joinedChatRoom, let room = ChatController.rooms[roomName] else {
-                    print("User attempted to send a message without first joining a room.")
-                    return
-                }
-                let body = self.markdownParser.html(from: message)
-                room.queue.send(.message(username: userName, body: body))
-            }
-        }
+        ws.onText(routeCommand(_:_:))
     }
     
     // MARK: Helpers
