@@ -55,6 +55,11 @@ class ChatController {
             }
             let body = self.markdownParser.html(from: String(split[2]))
             room.queue.send(.privateMessage(from: user, to: toUser, body: body))
+        } else if message.starts(with: "/list"){
+            let members = room.users.map { "- \($0.username)" }.sorted().joined(separator: "\n\n")
+            let combined = "Users in the room: \n\n\(members)"
+            let body = self.markdownParser.html(from: combined)
+            room.queue.send(.privateMessage(from: .system, to: user, body: body))
         } else {
             let body = self.markdownParser.html(from: message)
             room.queue.send(.message(user: user, body: body))
