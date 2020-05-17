@@ -76,9 +76,18 @@ class ChatController {
         let asUser = ChatUser(username)
         chatRoom.queue.send(.userJoined(user: asUser))
         let subscription = chatRoom.queue.sink(receiveValue: { (event) in
-            print("Chat: sending event to \(username)")
-            if let res = self.codableAsString(event) {
+            switch (event){
+            case .privateMessage(_, let toUser, _):
+                guard toUser == self.user, let res = self.codableAsString(event) else {
+                    return // not for you!
+                }
+                print("Chat: sending private message to \(username)")
                 ws.send(res)
+            default:
+                print("Chat: sending event to \(username)")
+                if let res = self.codableAsString(event) {
+                    ws.send(res)
+                }
             }
         })
         self.subscriptions.append(subscription)
