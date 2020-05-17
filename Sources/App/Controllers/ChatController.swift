@@ -18,17 +18,18 @@ class ChatController {
     private var subscriptions: [AnyCancellable] = []
     
     // Session variables
-    var userName: String? = nil
+    var user: ChatUser? = nil
+//    var userName: String? = nil
     var joinedChatRoom: String? = nil
     
     private func onDisconnect(_ res: Result<Void, Error>) {
         print("Socket disconnected")
-        if let roomName = joinedChatRoom, let user = userName {
+        if let roomName = joinedChatRoom, let user = user {
             guard let room = ChatController.rooms[roomName] else {
                 print("User \(user) was in room \(roomName), but room was not found")
                 return
             }
-            print("\(user) left \(roomName)")
+            print("\(user.username) left \(roomName)")
             room.users.remove(user)
             if (room.userCount == 0){
                 print("Room \(roomName) is empty; removing.")
@@ -53,7 +54,7 @@ class ChatController {
     }
     
     private func sendMessage(_ message: String, ws: WebSocket){
-        guard let userName = self.userName, let roomName = self.joinedChatRoom, let room = ChatController.rooms[roomName] else {
+        guard let userName = self.user?.username, let roomName = self.joinedChatRoom, let room = ChatController.rooms[roomName] else {
             print("User attempted to send a message without first joining a room.")
             return
         }
@@ -81,7 +82,8 @@ class ChatController {
             return
         }
         ws.send(asString)
-        self.userName = username
+        self.user = ChatUser(username)
+        chatRoom.users.insert(self.user!)
         self.joinedChatRoom = room
     }
     
