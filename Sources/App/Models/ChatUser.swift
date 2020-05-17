@@ -7,6 +7,17 @@
 
 import Foundation
 
-struct ChatUser: Hashable {
+class ChatUser: Hashable {
+    static func == (lhs: ChatUser, rhs: ChatUser) -> Bool {
+        lhs.username == rhs.username
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(username)
+    }
+    
     let username: String
+    init(_ username: String){
+        self.username = username
+    }
 }
