@@ -63,6 +63,10 @@ class ChatController {
     }
     
     private func joinRoom(room: String, username: String, ws: WebSocket){
+        if (username == "System"){
+            print("Chat: user attempted to join with illegal username 'System'")
+            return
+        }
         print("Chat: \(username) requested to join \(room)")
         let chatRoom: ChatRoom
         if ChatController.rooms[room] == nil {
