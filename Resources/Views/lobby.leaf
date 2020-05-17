@@ -53,7 +53,7 @@
 				chatBox.innerHTML += `<div class="list-group-item ${res.user.isSystem ? 'list-group-item-warning' : ''}"><h5 class="mb-1"><strong>${res.user.username}</strong>:</h5>${res.message}</div>`;
 				break;
 			case 'privateMessage':
-				chatBox.innerHTML += `<div class="list-group-item ${res.user.isSystem ? 'list-group-item-warning' : 'list-group-item-info'}"><h5 class="mb-1"><strong>${res.user.username}</strong>:</h5>${res.message}</div>`;
+				chatBox.innerHTML += `<div class="list-group-item ${res.user.isSystem ? 'list-group-item-warning' : 'list-group-item-info'}"><h5 class="mb-1"><strong>${res.user.username}</strong> to <strong>${res.toUser.username}</strong>:</h5>${res.message}</div>`;
 				break;
 			case 'userLeft':
 				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> left the chat.</p></div>`;
