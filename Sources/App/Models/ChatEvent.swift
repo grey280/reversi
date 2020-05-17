@@ -8,15 +8,15 @@
 import Foundation
 
 enum ChatEvent{
-    case userJoined(username: String)
-    case message(username: String, body: String)
-    case userLeft(username: String)
+    case userJoined(user: ChatUser)
+    case message(user: ChatUser, body: String)
+    case userLeft(user: ChatUser)
 }
 
 extension ChatEvent: Codable {
     fileprivate enum CodingKeys: String, CodingKey {
         case type
-        case username
+        case user
         case message
     }
     
@@ -26,30 +26,30 @@ extension ChatEvent: Codable {
         switch type {
         case .message:
             let message = try container.decode(String.self, forKey: .message)
-            let name = try container.decode(String.self, forKey: .username)
-            self = .message(username: name, body: message)
+            let user = try container.decode(ChatUser.self, forKey: .user)
+            self = .message(user: user, body: message)
         case .userJoined:
-            let name = try container.decode(String.self, forKey: .username)
-            self = .userJoined(username: name)
+            let user = try container.decode(ChatUser.self, forKey: .user)
+            self = .userJoined(user: user)
         case .userLeft:
-            let name = try container.decode(String.self, forKey: .username)
-            self = .userLeft(username: name)
+            let user = try container.decode(ChatUser.self, forKey: .user)
+            self = .userLeft(user: user)
         }
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
-        case .message(let username, let body):
+        case .message(let user, let body):
             try container.encode(ChatEventType.message.rawValue, forKey: .type)
-            try container.encode(username, forKey: .username)
+            try container.encode(user, forKey: .user)
             try container.encode(body, forKey: .message)
-        case .userJoined(let name):
+        case .userJoined(let user):
             try container.encode(ChatEventType.userJoined.rawValue, forKey: .type)
-            try container.encode(name, forKey: .username)
-        case .userLeft(let name):
+            try container.encode(user, forKey: .user)
+        case .userLeft(let user):
             try container.encode(ChatEventType.userLeft.rawValue, forKey: .type)
-            try container.encode(name, forKey: .username)
+            try container.encode(user, forKey: .user)
         }
     }
     

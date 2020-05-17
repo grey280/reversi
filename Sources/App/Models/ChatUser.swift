@@ -7,7 +7,14 @@
 
 import Foundation
 
-class ChatUser: Hashable {
+final class ChatUser {
+    let username: String
+    init(_ username: String){
+        self.username = username
+    }
+}
+
+extension ChatUser: Hashable {
     static func == (lhs: ChatUser, rhs: ChatUser) -> Bool {
         lhs.username == rhs.username
     }
@@ -15,9 +22,12 @@ class ChatUser: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(username)
     }
+}
+
+extension ChatUser: Encodable {
     
-    let username: String
-    init(_ username: String){
-        self.username = username
-    }
+}
+
+extension ChatUser: Decodable {
+    
 }

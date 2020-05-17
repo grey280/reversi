@@ -54,12 +54,12 @@ class ChatController {
     }
     
     private func sendMessage(_ message: String, ws: WebSocket){
-        guard let userName = self.user?.username, let roomName = self.joinedChatRoom, let room = ChatController.rooms[roomName] else {
+        guard let user = self.user, let roomName = self.joinedChatRoom, let room = ChatController.rooms[roomName] else {
             print("User attempted to send a message without first joining a room.")
             return
         }
         let body = self.markdownParser.html(from: message)
-        room.queue.send(.message(username: userName, body: body))
+        room.queue.send(.message(user: user, body: body))
     }
     
     private func joinRoom(room: String, username: String, ws: WebSocket){
@@ -69,7 +69,8 @@ class ChatController {
             ChatController.rooms[room] = ChatRoom()
         }
         chatRoom = ChatController.rooms[room]!
-        chatRoom.queue.send(.userJoined(username: username))
+        let asUser = ChatUser(username)
+        chatRoom.queue.send(.userJoined(user: asUser))
         let subscription = chatRoom.queue.sink(receiveValue: { (event) in
             print("Chat: sending event to \(username)")
             if let res = self.codableAsString(event) {
@@ -82,8 +83,8 @@ class ChatController {
             return
         }
         ws.send(asString)
-        self.user = ChatUser(username)
-        chatRoom.users.insert(self.user!)
+        self.user = asUser
+        chatRoom.users.insert(asUser)
         self.joinedChatRoom = room
     }
     
