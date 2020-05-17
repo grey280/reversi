@@ -58,8 +58,25 @@ class ChatController {
             print("User attempted to send a message without first joining a room.")
             return
         }
-        let body = self.markdownParser.html(from: message)
-        room.queue.send(.message(user: user, body: body))
+        if (message.starts(with: "/pm ")){
+            let split = message.split(separator: " ", maxSplits: 2, omittingEmptySubsequences: true)
+            guard split.count == 3 else {
+                room.queue.send(.privateMessage(from: .system, to: user, body: #"<p>Invalid command "\#(split[0])"</p>"#))
+                return
+            }
+            guard let toUser = room.users.first(where: { (roomUser) -> Bool in
+                roomUser.username == split[1]
+            }) else {
+                print("Could not find user to send message to.")
+                room.queue.send(.privateMessage(from: .system, to: user, body: "<p>User <strong>\(split[1])</strong> not found.</p>"))
+                return
+            }
+            let body = self.markdownParser.html(from: String(split[2]))
+            room.queue.send(.privateMessage(from: user, to: toUser, body: body))
+        } else {
+            let body = self.markdownParser.html(from: message)
+            room.queue.send(.message(user: user, body: body))
+        }
     }
     
     private func joinRoom(room: String, username: String, ws: WebSocket){
