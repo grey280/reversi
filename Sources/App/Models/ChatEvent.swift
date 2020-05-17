@@ -54,7 +54,8 @@ extension ChatEvent: Codable {
         case .privateMessage:
             let fromUser = try container.decode(ChatUser.self, forKey: .user)
             let toUser = try container.decode(ChatUser.self, forKey: .toUser)
-            let body = try container.decode(String.self. forKey: .body)
+            let body = try container.decode(String.self, forKey: .message)
+            self = .privateMessage(from: fromUser, to: toUser, body: body)
         }
     }
     
@@ -69,7 +70,7 @@ extension ChatEvent: Codable {
             try container.encode(user, forKey: .user)
         case .userLeft(let user):
             try container.encode(user, forKey: .user)
-        case .privateMessage(let fromUser, let toUser, let body)
+        case .privateMessage(let fromUser, let toUser, let body):
             try container.encode(fromUser, forKey: .user)
             try container.encode(toUser, forKey: .toUser)
             try container.encode(body, forKey: .message)
