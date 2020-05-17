@@ -9,10 +9,6 @@ import Vapor
 import OpenCombine
 import Ink
 
-struct ChatUser: Hashable {
-    let username: String
-}
-
 class ChatRoom {
     let queue = PassthroughSubject<ChatEvent, Never>()
     var users: Set<String> = []
