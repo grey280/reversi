@@ -122,6 +122,30 @@
 		textBox.value = "";
 		return false;
 	}
+
+	function invite(user){
+		user = JSON.parse(user); // so it's an object
+		var commandBody = {
+			command: 'invite',
+			user: user
+		};
+		var text = JSON.stringify(commandBody);
+		socket.send(text);
+		return false; // for even bubbling
+	}
+
+	function uninvite(user){ 
+		function invite(user){
+		user = JSON.parse(user); // so it's an object
+		var commandBody = {
+			command: 'uninvite',
+			user: user
+		};
+		var text = JSON.stringify(commandBody);
+		socket.send(text);
+		return false; // for even bubbling
+	}
+	}
 </script> 
 #endexport
 #endextend
