@@ -24,10 +24,21 @@ extension ChatUser: Hashable {
     }
 }
 
-extension ChatUser: Encodable {
+extension ChatUser: Codable {
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(username, forKey: .username)
+        try container.encode(hashValue, forKey: .id)
+    }
     
-}
-
-extension ChatUser: Decodable {
+    fileprivate enum CodingKeys: String, CodingKey {
+        case username
+        case id
+    }
     
+    convenience init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let username = try container.decode(String.self, forKey: .username)
+        self.init(username)
+    }
 }

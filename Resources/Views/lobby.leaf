@@ -47,13 +47,13 @@
 		const chatBox = document.getElementById('chatBox');
 		switch (res.type){
 			case 'userJoined':
-				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.username}</strong> joined the chat.</p></div>`;
+				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
 				break;
 			case 'message':
-				chatBox.innerHTML += `<div class="list-group-item"><h5 class="mb-1"><strong>${res.username}</strong>:</5>${res.message}</div>`;
+				chatBox.innerHTML += `<div class="list-group-item"><h5 class="mb-1"><strong>${res.user.username}</strong>:</5>${res.message}</div>`;
 				break;
 			case 'userLeft':
-				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.username}</strong> left the chat.</p></div>`;
+				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> left the chat.</p></div>`;
 				break;
 		}
 		console.log('handled')
