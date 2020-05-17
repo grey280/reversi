@@ -9,15 +9,6 @@ import Vapor
 import OpenCombine
 import Ink
 
-class ChatRoom {
-    let queue = PassthroughSubject<ChatEvent, Never>()
-    var users: Set<String> = []
-    
-    var userCount: Int {
-        users.count
-    }
-}
-
 class ChatController {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
