@@ -26,27 +26,32 @@ class ChatController {
     
     private var subscriptions: [AnyCancellable] = []
     
+    // Session variables
+    var userName: String? = nil
+    var joinedChatRoom: String? = nil
+    
+    private func onDisconnect(_ res: Result<Void, Error>) {
+        print("Socket disconnected")
+        if let roomName = joinedChatRoom, let user = userName {
+            guard let room = ChatController.rooms[roomName] else {
+                print("User \(user) was in room \(roomName), but room was not found")
+                return
+            }
+            print("\(user) left \(roomName)")
+            room.users.remove(user)
+            if (room.userCount == 0){
+                print("Room \(roomName) is empty; removing.")
+                ChatController.rooms.removeValue(forKey: roomName)
+            }
+        } else {
+            print("Unable to determine room or user name; nothing to do")
+        }
+    }
+    
     func socket(_ req: Request, _ ws: WebSocket) -> () {
         print("Socket connected")
-        var userName: String? = nil
-        var joinedChatRoom: String? = nil
-         ws.onClose.whenComplete { (res) in
-            print("Socket disconnected.")
-            if let roomName = joinedChatRoom, let user = userName {
-                guard let room = ChatController.rooms[roomName] else {
-                    print("User \(user) was in room \(roomName), but room was not found")
-                    return
-                }
-                print("\(user) left \(roomName)")
-                room.users.remove(user)
-                if (room.userCount == 0){
-                    print("Room \(roomName) is empty; removing.")
-                    rooms.removeValue(forKey: roomName)
-                }
-            } else {
-                print("Unable to determine room or user name; nothing to do")
-            }
-        }
+        
+        ws.onClose.whenComplete(onDisconnect(_:))
         ws.onText { (ws, text) in
             print("Command received!")
             guard let command = self.parseCommand(text) else {
@@ -73,10 +78,10 @@ class ChatController {
                     return
                 }
                 ws.send(asString)
-                userName = username
-                joinedChatRoom = room
+                self.userName = username
+                self.joinedChatRoom = room
             case .sendMessage(let message):
-                guard let userName = userName, let roomName = joinedChatRoom, let room = ChatController.rooms[roomName] else {
+                guard let userName = self.userName, let roomName = self.joinedChatRoom, let room = ChatController.rooms[roomName] else {
                     print("User attempted to send a message without first joining a room.")
                     return
                 }
@@ -85,6 +90,8 @@ class ChatController {
             }
         }
     }
+    
+    // MARK: Helpers
     
     private func parseCommand(_ text: String) -> ChatCommand? {
         do {
