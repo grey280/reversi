@@ -12,6 +12,13 @@ enum ChatEvent{
     case message(user: ChatUser, body: String)
     case privateMessage(from: ChatUser, to: ChatUser, body: String)
     case userLeft(user: ChatUser)
+    
+    enum ChatEventType: String, Codable {
+        case userJoined
+        case message
+        case privateMessage
+        case userLeft
+    }
 }
 
 extension ChatEvent {
@@ -75,12 +82,5 @@ extension ChatEvent: Codable {
             try container.encode(toUser, forKey: .toUser)
             try container.encode(body, forKey: .message)
         }
-    }
-    
-    enum ChatEventType: String, Codable {
-        case userJoined
-        case message
-        case privateMessage
-        case userLeft
     }
 }
