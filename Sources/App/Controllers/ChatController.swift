@@ -134,6 +134,26 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                 inRoom = room
             case .sendMessage(let message):
                 self.sendMessage(message, ws: ws, user: user, roomName: inRoom)
+            case .invite(let toUser):
+                guard let roomName = inRoom, let room = ChatController.rooms[roomName] else {
+                    print("Invite: user \(user?.username ?? "unnamed user") is not in a room.")
+                    return
+                }
+                guard let user = user else {
+                    print("Invite: 'from' user is not defined")
+                    return
+                }
+                room.queue.send(.invite(from: user, to: toUser))
+            case .uninvite(let toUser):
+                guard let roomName = inRoom, let room = ChatController.rooms[roomName] else {
+                    print("Uninvite: user \(user?.username ?? "unnamed user") is not in a room.")
+                    return
+                }
+                guard let user = user else {
+                    print("Uninvite: 'from' user is not defined")
+                    return
+                }
+                room.queue.send(.invite(from: user, to: toUser))
             }
         }
     }
