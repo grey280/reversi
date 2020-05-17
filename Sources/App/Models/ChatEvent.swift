@@ -12,12 +12,16 @@ enum ChatEvent{
     case message(user: ChatUser, body: String)
     case privateMessage(from: ChatUser, to: ChatUser, body: String)
     case userLeft(user: ChatUser)
+    case invite(from: ChatUser, to: ChatUser)
+    case uninvite(from: ChatUser, to: ChatUser)
     
     enum ChatEventType: String, Codable {
         case userJoined
         case message
         case privateMessage
         case userLeft
+        case invite
+        case uninvite
     }
 }
 
@@ -32,6 +36,10 @@ extension ChatEvent {
             return .userJoined
         case .userLeft:
             return .userLeft
+        case .invite:
+            return .invite
+        case .uninvite:
+            return .uninvite
         }
     }
 }
@@ -63,6 +71,14 @@ extension ChatEvent: Codable {
             let toUser = try container.decode(ChatUser.self, forKey: .toUser)
             let body = try container.decode(String.self, forKey: .message)
             self = .privateMessage(from: fromUser, to: toUser, body: body)
+        case .invite:
+            let fromUser = try container.decode(ChatUser.self, forKey: .user)
+            let toUser = try container.decode(ChatUser.self, forKey: .toUser)
+            self = .invite(from: fromUser, to: toUser)
+        case .uninvite:
+            let fromUser = try container.decode(ChatUser.self, forKey: .user)
+            let toUser = try container.decode(ChatUser.self, forKey: .toUser)
+            self = .uninvite(from: fromUser, to: toUser)
         }
     }
     
@@ -81,6 +97,9 @@ extension ChatEvent: Codable {
             try container.encode(fromUser, forKey: .user)
             try container.encode(toUser, forKey: .toUser)
             try container.encode(body, forKey: .message)
+        case .invite(let fromUser, let toUser), .uninvite(let fromUser, let toUser):
+            try container.encode(fromUser, forKey: .user)
+            try container.encode(toUser, forKey: .toUser)
         }
     }
 }
