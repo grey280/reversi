@@ -11,18 +11,6 @@ import Ink
 
 struct ChatUser: Hashable {
     let username: String
-    
-    init(_ username: String){
-        self.username = username
-    }
-    
-    static func ==(lhs: ChatUser, rhs: ChatUser) -> Bool {
-        lhs.username == rhs.username
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(username)
-    }
 }
 
 class ChatRoom {
