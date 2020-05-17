@@ -14,6 +14,21 @@ enum ChatEvent{
     case userLeft(user: ChatUser)
 }
 
+extension ChatEvent {
+    var eventType: ChatEventType {
+        switch self {
+        case .message:
+            return .message
+        case .privateMessage:
+            return .privateMessage
+        case .userJoined:
+            return .userJoined
+        case .userLeft:
+            return .userLeft
+        }
+    }
+}
+
 extension ChatEvent: Codable {
     fileprivate enum CodingKeys: String, CodingKey {
         case type
@@ -45,26 +60,23 @@ extension ChatEvent: Codable {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.eventType.rawValue, forKey: .type)
         switch self {
         case .message(let user, let body):
-            try container.encode(ChatEventType.message.rawValue, forKey: .type)
             try container.encode(user, forKey: .user)
             try container.encode(body, forKey: .message)
         case .userJoined(let user):
-            try container.encode(ChatEventType.userJoined.rawValue, forKey: .type)
             try container.encode(user, forKey: .user)
         case .userLeft(let user):
-            try container.encode(ChatEventType.userLeft.rawValue, forKey: .type)
             try container.encode(user, forKey: .user)
         case .privateMessage(let fromUser, let toUser, let body)
-            try container.encode(ChatEventType.privateMessage.rawValue, forKey: .type)
             try container.encode(fromUser, forKey: .user)
             try container.encode(toUser, forKey: .toUser)
             try container.encode(body, forKey: .message)
         }
     }
     
-    fileprivate enum ChatEventType: String, Codable {
+    enum ChatEventType: String, Codable {
         case userJoined
         case message
         case privateMessage
