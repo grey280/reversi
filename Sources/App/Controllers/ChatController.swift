@@ -35,7 +35,7 @@ class ChatController {
         }
     }
     
-    private func sendMessage(_ message: String, ws: WebSocket, user: inout ChatUser?, roomName: inout String?){
+    private func sendMessage(_ message: String, ws: WebSocket, user: ChatUser?, roomName: String?){
         guard let user = user, let roomName = roomName, let room = ChatController.rooms[roomName] else {
             print("User attempted to send a message without first joining a room.")
             return
@@ -114,7 +114,7 @@ class ChatController {
                 chatRoom.users.insert(asUser)
                 inRoom = room
             case .sendMessage(let message):
-                self.sendMessage(message, ws: ws, user: &user, roomName: &inRoom)
+                self.sendMessage(message, ws: ws, user: user, roomName: inRoom)
             }
         }
     }
