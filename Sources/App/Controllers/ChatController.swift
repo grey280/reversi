@@ -101,9 +101,4 @@ class ChatController {
             return nil
         }
     }
-    
-    
-    
 }
-
-

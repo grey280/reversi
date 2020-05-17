@@ -10,6 +10,7 @@ import Foundation
 enum ChatEvent{
     case userJoined(username: String)
     case message(username: String, body: String)
+    case userLeft(username: String)
 }
 
 extension ChatEvent: Codable {
@@ -30,6 +31,9 @@ extension ChatEvent: Codable {
         case .userJoined:
             let name = try container.decode(String.self, forKey: .username)
             self = .userJoined(username: name)
+        case .userLeft:
+            let name = try container.decode(String.self, forKey: .username)
+            self = .userLeft(username: name)
         }
     }
     
@@ -43,11 +47,15 @@ extension ChatEvent: Codable {
         case .userJoined(let name):
             try container.encode(ChatEventType.userJoined.rawValue, forKey: .type)
             try container.encode(name, forKey: .username)
+        case .userLeft(let name):
+            try container.encode(ChatEventType.userLeft.rawValue, forKey: .type)
+            try container.encode(name, forKey: .username)
         }
     }
     
     fileprivate enum ChatEventType: String, Codable {
         case userJoined
         case message
+        case userLeft
     }
 }

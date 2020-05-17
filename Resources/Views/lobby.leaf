@@ -51,6 +51,10 @@
 				break;
 			case 'message':
 				chatBox.innerHTML += `<div class="list-group-item"><h5 class="mb-1"><strong>${res.username}</strong>:</5>${res.message}</div>`;
+				break;
+			case 'userLeft':
+				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.username}</strong> left the chat.</p></div>`;
+				break;
 		}
 		console.log('handled')
 	}
