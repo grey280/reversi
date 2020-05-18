@@ -90,7 +90,26 @@
 				// find the 'to' user in the list, and mark them as 'invited'
 				// find the 'from' user in the list, and mark them as 'ready to play'
 				// check the existence of both, and we don't need to *know* our own ID
-				
+				const fromUserRow = chatBox.querySelector(`#user_${res.from.id}`);
+				if (fromUserRow){
+					const fromUserButton = fromUserRow.querySelector('button');
+					if (fromUserButton){
+						fromUserButton.onclick = null; // clear the old event
+						fromUserButton.classList.remove('btn-primary');
+						fromUserButton.classList.add('btn-success');
+						fromUserButton.innerText = "Play";
+					}
+				}
+				const toUserRow = chatBox.querySelector(`#user_${res.to.id}`);
+				if (toUserRow){
+					const toUserButton = toUserRow.querySelector('button');
+					if (toUserButton){
+						toUserButton.onclick = uninvite(res.to);
+						toUserButton.classList.remove('btn-primary');
+						toUserButton.classList.add('btn-outline-primary');
+						toUserButton.innerText = 'Invited';
+					}
+				}
 				break;
 			case 'uninvite':
 				// TODO: Implement - as in 'invite'
