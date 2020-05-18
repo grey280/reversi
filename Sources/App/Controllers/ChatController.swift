@@ -123,8 +123,8 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                     }
                 })
                 self.subscriptions.append(subscription)
-                let result: JoinRoomResponse = .success(room: room, username: username, membership: chatRoom.userCount)
                 guard let asString = self.codableAsString(result) else {
+                let result: JoinRoomResponse = .success(room: room, username: username, membership: Array(chatRoom.users))
                     return
                 }
                 ws.send(asString)
