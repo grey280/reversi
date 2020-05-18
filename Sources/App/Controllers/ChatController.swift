@@ -152,7 +152,7 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                     print("Uninvite: 'from' user is not defined")
                     return
                 }
-                room.queue.send(.invite(from: user, to: toUser))
+                room.queue.send(.uninvite(from: user, to: toUser))
             }
         }
     }
