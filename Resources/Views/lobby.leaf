@@ -10,7 +10,7 @@
 	.lobbyUser.active{
 		max-height: 15em;
 	}
-	#chatBox {
+	\#chatBox {
 		max-height: 800px;
 	}
 </style>
@@ -89,12 +89,12 @@
 					}, 1000);
 				}
 				break;
-			case 'invite':
+			case 'invite': {
 				// look at the from and to
 				// find the 'to' user in the list, and mark them as 'invited'
 				// find the 'from' user in the list, and mark them as 'ready to play'
 				// check the existence of both, and we don't need to *know* our own ID
-				const fromUserRow = chatBox.querySelector(`#user_${res.from.id}`);
+				const fromUserRow = lobbyArea.querySelector(`\#user_${res.user.id}`);
 				if (fromUserRow){
 					const fromUserButton = fromUserRow.querySelector('button');
 					if (fromUserButton){
@@ -104,39 +104,41 @@
 						fromUserButton.innerText = "Play";
 					}
 				}
-				const toUserRow = chatBox.querySelector(`#user_${res.to.id}`);
+				const toUserRow = lobbyArea.querySelector(`\#user_${res.toUser.id}`);
 				if (toUserRow){
 					const toUserButton = toUserRow.querySelector('button');
 					if (toUserButton){
-						toUserButton.onclick = uninvite(res.to);
+						toUserButton.onclick = () => uninvite(res.toUser);
 						toUserButton.classList.remove('btn-primary');
 						toUserButton.classList.add('btn-outline-primary');
 						toUserButton.innerText = 'Invited';
 					}
 				}
 				break;
-			case 'uninvite':
-				const fromUserRow = chatBox.querySelector(`#user_${res.from.id}`);
+			}
+			case 'uninvite': {
+				const fromUserRow = lobbyArea.querySelector(`\#user_${res.user.id}`);
 				if (fromUserRow){
 					const fromUserButton = fromUserRow.querySelector('button');
 					if (fromUserButton){
-						fromUserButton.onclick = invite(res.from);
+						fromUserButton.onclick = () => invite(res.user);
 						fromUserButton.classList.add('btn-primary');
 						fromUserButton.classList.remove('btn-success');
 						fromUserButton.innerText = "Invite";
 					}
 				}
-				const toUserRow = chatBox.querySelector(`#user_${res.to.id}`);
+				const toUserRow = lobbyArea.querySelector(`\#user_${res.toUser.id}`);
 				if (toUserRow){
 					const toUserButton = toUserRow.querySelector('button');
 					if (toUserButton){
-						toUserButton.onclick = invite(res.to);
+						toUserButton.onclick = () => invite(res.toUser);
 						toUserButton.classList.add('btn-primary');
 						toUserButton.classList.remove('btn-outline-primary');
 						toUserButton.innerText = 'Invite';
 					}
 				}
 				break;
+			}
 		}
 		console.log('handled')
 	}
@@ -176,7 +178,7 @@
 	}
 
 	function invite(user){
-		user = JSON.parse(user); // so it's an object
+		if (typeof user == 'string') user = JSON.parse(user); // I hate this language
 		var commandBody = {
 			command: 'invite',
 			user: user
@@ -187,7 +189,7 @@
 	}
 
 	function uninvite(user){ 
-		user = JSON.parse(user); // so it's an object
+		if (typeof user == 'string') user = JSON.parse(user); // I hate this language
 		var commandBody = {
 			command: 'uninvite',
 			user: user
@@ -202,6 +204,7 @@
 		const row = document.createElement('div');
 		row.classList.add('row');
 		row.classList.add('lobbyUser');
+		row.id = `user_${user.id}`
 		const leftDiv = document.createElement('div');
 		leftDiv.classList.add('col-md-9');
 		leftDiv.innerHTML = `<h3>${user.username}</h3>`;
@@ -210,7 +213,7 @@
 		button.classList.add('btn');
 		button.classList.add('btn-primary');
 		button.innerText = 'Invite';
-		button.onclick = invite(user);
+		button.onclick = () => invite(user);
 		row.appendChild(button);
 		document.getElementById('userList').appendChild(row);
 		setTimeout(() => {
