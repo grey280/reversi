@@ -1,5 +1,7 @@
 #extend("base"):
 #export("title", "Reversi")
+#export("additionalHead"):
+#endexport
 #export("body"):
 <div class="row">
 	<div class="col">
