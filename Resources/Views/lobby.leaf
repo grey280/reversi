@@ -64,6 +64,10 @@
 		const chatBox = document.getElementById('chatBox');
 		const lobbyArea = document.getElementById('userList');
 		switch (res.type){
+			case 'roomJoined':
+				for (const user of res.payload.membership){
+					createUserRow(user);
+				}
 			case 'userJoined':
 				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
 				createUserRow(res.user);
