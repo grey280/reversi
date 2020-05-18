@@ -113,7 +113,26 @@
 				}
 				break;
 			case 'uninvite':
-				// TODO: Implement - as in 'invite'
+				const fromUserRow = chatBox.querySelector(`#user_${res.from.id}`);
+				if (fromUserRow){
+					const fromUserButton = fromUserRow.querySelector('button');
+					if (fromUserButton){
+						fromUserButton.onclick = invite(res.from);
+						fromUserButton.classList.add('btn-primary');
+						fromUserButton.classList.remove('btn-success');
+						fromUserButton.innerText = "Invite";
+					}
+				}
+				const toUserRow = chatBox.querySelector(`#user_${res.to.id}`);
+				if (toUserRow){
+					const toUserButton = toUserRow.querySelector('button');
+					if (toUserButton){
+						toUserButton.onclick = invite(res.to);
+						toUserButton.classList.add('btn-primary');
+						toUserButton.classList.remove('btn-outline-primary');
+						toUserButton.innerText = 'Invite';
+					}
+				}
 				break;
 		}
 		console.log('handled')
