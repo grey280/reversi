@@ -7,7 +7,7 @@
 
 import Foundation
 enum JoinRoomResponse {
-    case success(room: String, username: String, membership: Int)
+    case success(room: String, username: String, membership: [ChatUser])
     case failure(message: String)
 }
 
@@ -19,7 +19,7 @@ extension JoinRoomResponse: Codable {
         case .success:
             let room = try container.decode(String.self, forKey: .room)
             let username = try container.decode(String.self, forKey: .username)
-            let membership = try container.decode(Int.self, forKey: .membership)
+            let membership = try container.decode([ChatUser].self, forKey: .membership)
             self = .success(room: room, username: username, membership: membership)
         case .failure:
             let message = try container.decode(String.self, forKey: .message)

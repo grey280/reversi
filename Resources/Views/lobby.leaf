@@ -1,5 +1,20 @@
 #extend("base"):
 #export("title", "Lobby")
+#export("additionalHead"):
+<style type="text/css">
+	.lobbyUser {
+		max-height: 0;
+		transition: max-height 0.5s linear;
+		overflow: hidden;
+	}
+	.lobbyUser.active{
+		max-height: 15em;
+	}
+	\#chatBox {
+		max-height: 800px;
+	}
+</style>
+#endexport
 #export("body"):
 <div class="row">
 	<div class="col-md-8">
@@ -7,7 +22,9 @@
 			<h1 class="card-header">Lobby</h1>
 			<div class="card-body">
 				<h2>Hello, #(username)!</h2>
-				<p>(Coming soon!)</p>
+				<div id="userList">
+
+				</div>
 			</div>
 		</div>
 	</div>
@@ -32,7 +49,10 @@
 </div>
 <script>
 	const username = '#(username)';
-	const url = `ws://${window.location.host}/socket`;
+	let url = `ws://${window.location.host}/socket`;
+	if (window.location.hostname != 'localhost'){
+		url = url.replace('ws://', 'wss://') // can't use WSS when running locally, but on Heroku, it's fine
+	}
 	console.group('Socket Setup')
 	console.log('Username is ' + username)
 	console.log('Connecting to ' + url)
@@ -42,12 +62,87 @@
 		console.log(e.data);
 		const res = JSON.parse(e.data);
 		const chatBox = document.getElementById('chatBox');
+		const lobbyArea = document.getElementById('userList');
 		switch (res.type){
+			case 'roomJoined':
+				for (const user of res.payload.membership){
+					createUserRow(user);
+				}
 			case 'userJoined':
-				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.username}</strong> joined the chat.</p></div>`;
+				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
+				createUserRow(res.user);
+				// lobbyArea.innerHTML += `<div id="user_${res.user.id}" class="lobbyUser">User ${res.user.username}.</div>`
+				// setTimeout(() => {
+				// 	const newItem = document.getElementById(`user_${res.user.id}`);
+				// 	newItem.classList.add("active");
+				// }, 10);
 				break;
 			case 'message':
-				chatBox.innerHTML += `<div class="list-group-item"><h5 class="mb-1"><strong>${res.username}</strong>:</5>${res.message}</div>`;
+				chatBox.innerHTML += `<div class="list-group-item ${res.user.isSystem ? 'list-group-item-warning' : ''}"><h5 class="mb-1"><strong>${res.user.username}</strong>:</h5>${res.message}</div>`;
+				break;
+			case 'privateMessage':
+				chatBox.innerHTML += `<div class="list-group-item ${res.user.isSystem ? 'list-group-item-warning' : 'list-group-item-info'}"><h5 class="mb-1"><strong>${res.user.username}</strong> to <strong>${res.toUser.username}</strong>:</h5>${res.message}</div>`;
+				break;
+			case 'userLeft':
+				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> left the chat.</p></div>`;
+				const oldItem = document.getElementById(`user_${res.user.id}`);
+				if (oldItem){
+					oldItem.classList.remove('active');
+					setTimeout(() => {
+						oldItem.parentNode.removeChild(oldItem);
+					}, 1000);
+				}
+				break;
+			case 'invite': {
+				// look at the from and to
+				// find the 'to' user in the list, and mark them as 'invited'
+				// find the 'from' user in the list, and mark them as 'ready to play'
+				// check the existence of both, and we don't need to *know* our own ID
+				const fromUserRow = lobbyArea.querySelector(`\#user_${res.user.id}`);
+				if (fromUserRow){
+					const fromUserButton = fromUserRow.querySelector('button');
+					if (fromUserButton){
+						fromUserButton.onclick = null; // clear the old event
+						fromUserButton.classList.remove('btn-primary');
+						fromUserButton.classList.add('btn-success');
+						fromUserButton.innerText = "Play";
+					}
+				}
+				const toUserRow = lobbyArea.querySelector(`\#user_${res.toUser.id}`);
+				if (toUserRow){
+					const toUserButton = toUserRow.querySelector('button');
+					if (toUserButton){
+						toUserButton.onclick = () => uninvite(res.toUser);
+						toUserButton.classList.remove('btn-primary');
+						toUserButton.classList.add('btn-outline-primary');
+						toUserButton.innerText = 'Invited';
+					}
+				}
+				break;
+			}
+			case 'uninvite': {
+				const fromUserRow = lobbyArea.querySelector(`\#user_${res.user.id}`);
+				if (fromUserRow){
+					const fromUserButton = fromUserRow.querySelector('button');
+					if (fromUserButton){
+						fromUserButton.onclick = () => invite(res.user);
+						fromUserButton.classList.add('btn-primary');
+						fromUserButton.classList.remove('btn-success');
+						fromUserButton.innerText = "Invite";
+					}
+				}
+				const toUserRow = lobbyArea.querySelector(`\#user_${res.toUser.id}`);
+				if (toUserRow){
+					const toUserButton = toUserRow.querySelector('button');
+					if (toUserButton){
+						toUserButton.onclick = () => invite(res.toUser);
+						toUserButton.classList.add('btn-primary');
+						toUserButton.classList.remove('btn-outline-primary');
+						toUserButton.innerText = 'Invite';
+					}
+				}
+				break;
+			}
 		}
 		console.log('handled')
 	}
@@ -79,11 +174,56 @@
 			command: 'sendMessage',
 			messageBody: textBox.value
 		}
-		console.log('sending message: ' + messageBody);
+		console.log('sending message: ', messageBody);
 		var text = JSON.stringify(messageBody)
 		socket.send(text);
 		textBox.value = "";
 		return false;
+	}
+
+	function invite(user){
+		if (typeof user == 'string') user = JSON.parse(user); // I hate this language
+		var commandBody = {
+			command: 'invite',
+			user: user
+		};
+		var text = JSON.stringify(commandBody);
+		socket.send(text);
+		return false; // for event bubbling
+	}
+
+	function uninvite(user){ 
+		if (typeof user == 'string') user = JSON.parse(user); // I hate this language
+		var commandBody = {
+			command: 'uninvite',
+			user: user
+		};
+		var text = JSON.stringify(commandBody);
+		socket.send(text);
+		return false; // for event bubbling
+	}
+
+	function createUserRow(user){
+		if (typeof user == 'string') user = JSON.parse(user); // I hate this language
+		const row = document.createElement('div');
+		row.classList.add('row');
+		row.classList.add('lobbyUser');
+		row.classList.add('pb-2');
+		row.id = `user_${user.id}`
+		const leftDiv = document.createElement('div');
+		leftDiv.classList.add('col-md-9');
+		leftDiv.innerHTML = `<h3>${user.username}</h3>`;
+		row.appendChild(leftDiv);
+		const button = document.createElement('button');
+		button.classList.add('btn');
+		button.classList.add('btn-primary');
+		button.innerText = 'Invite';
+		button.onclick = () => invite(user);
+		row.appendChild(button);
+		document.getElementById('userList').appendChild(row);
+		setTimeout(() => {
+			row.classList.add('active');
+		}, 50);
 	}
 </script> 
 #endexport
