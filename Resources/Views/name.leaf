@@ -1,5 +1,7 @@
 #extend("base"):
 #export("title", "Reversi - What's your name?")
+#export("additionalHead"):
+#endexport
 #export("body"):
 <div class="row">
 	<div class="col">

@@ -1,5 +1,7 @@
 #extend("base"):
 #export("title", "About")
+#export("additionalHead"):
+#endexport
 #export("body"):
 <div class="row mb-2">
 	<div class="col">
