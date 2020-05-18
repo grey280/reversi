@@ -208,6 +208,7 @@
 		const row = document.createElement('div');
 		row.classList.add('row');
 		row.classList.add('lobbyUser');
+		row.classList.add('pb-2');
 		row.id = `user_${user.id}`
 		const leftDiv = document.createElement('div');
 		leftDiv.classList.add('col-md-9');
