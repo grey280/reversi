@@ -63,11 +63,12 @@
 		switch (res.type){
 			case 'userJoined':
 				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
-				lobbyArea.innerHTML += `<div id="user_${res.user.id}" class="lobbyUser">User ${res.user.username}.</div>`
-				setTimeout(() => {
-					const newItem = document.getElementById(`user_${res.user.id}`);
-					newItem.classList.add("active");
-				}, 10);
+				createUserRow(res.user);
+				// lobbyArea.innerHTML += `<div id="user_${res.user.id}" class="lobbyUser">User ${res.user.username}.</div>`
+				// setTimeout(() => {
+				// 	const newItem = document.getElementById(`user_${res.user.id}`);
+				// 	newItem.classList.add("active");
+				// }, 10);
 				break;
 			case 'message':
 				chatBox.innerHTML += `<div class="list-group-item ${res.user.isSystem ? 'list-group-item-warning' : ''}"><h5 class="mb-1"><strong>${res.user.username}</strong>:</h5>${res.message}</div>`;
@@ -172,6 +173,27 @@
 		var text = JSON.stringify(commandBody);
 		socket.send(text);
 		return false; // for event bubbling
+	}
+
+	function createUserRow(user){
+		if (typeof user == 'string') user = JSON.parse(user); // I hate this language
+		const row = document.createElement('div');
+		row.classList.add('row');
+		row.classList.add('lobbyUser');
+		const leftDiv = document.createElement('div');
+		leftDiv.classList.add('col-md-9');
+		leftDiv.innerHTML = `<h3>${user.username}</h3>`;
+		row.appendChild(leftDiv);
+		const button = document.createElement('button');
+		button.classList.add('btn');
+		button.classList.add('btn-primary');
+		button.innerText = 'Invite';
+		button.onclick = invite(user);
+		row.appendChild(button);
+		document.getElementById('userList').appendChild(row);
+		setTimeout(() => {
+			row.classList.add('active');
+		}, 50);
 	}
 </script> 
 #endexport
