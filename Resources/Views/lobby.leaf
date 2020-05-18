@@ -10,6 +10,9 @@
 	.lobbyUser.active{
 		max-height: 15em;
 	}
+	#chatBox {
+		max-height: 800px;
+	}
 </style>
 #endexport
 #export("body"):
