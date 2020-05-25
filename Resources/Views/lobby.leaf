@@ -97,7 +97,7 @@
 				if (fromUserRow){
 					const fromUserButton = fromUserRow.querySelector('button');
 					if (fromUserButton){
-						fromUserButton.onclick = null; // clear the old event
+						fromUserButton.onclick = () => accept(res.user);
 						fromUserButton.classList.remove('btn-primary');
 						fromUserButton.classList.add('btn-success');
 						fromUserButton.innerText = "Play";
@@ -201,6 +201,17 @@
 		var text = JSON.stringify(commandBody);
 		socket.send(text);
 		return false; // for event bubbling
+	}
+
+	function accept(user){
+		if (typeof user == 'string') user = JSON.parse(user); // I *still* hate this language
+		var commandBody = {
+			command: 'accept',
+			user: user
+		};
+		var text = JSON.stringify(commandBody);
+		socket.send(text);
+		return false; // bubble bubble bubble
 	}
 
 	function createUserRow(user){
