@@ -205,6 +205,18 @@
 
 	function accept(user){
 		if (typeof user == 'string') user = JSON.parse(user); // I *still* hate this language
+		// Mark the game as starting
+		const targetUserRow = lobbyArea.querySelector(`\#user_${user.id}`);
+		if (targetUserRow){
+			const targetUserButton = targetUserRow.querySelector('button');
+			if (targetUserButton){
+				targetUserButton.onclick = null; // clear the event
+				targetUserButton.classList.remove('btn-success');
+				targetUserButton.classList.add('btn-outline-success');
+				targetUserButton.innerText = "Starting..."
+			}
+		}
+		// Send the command
 		var commandBody = {
 			command: 'accept',
 			user: user
