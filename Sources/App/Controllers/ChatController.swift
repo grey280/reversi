@@ -153,6 +153,9 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                     return
                 }
                 room.queue.send(.uninvite(from: user, to: toUser))
+            case .accept(user: let user):
+                // TODO: Implement
+                #warning("not implemented")
             }
         }
     }
