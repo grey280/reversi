@@ -71,11 +71,6 @@
 			case 'userJoined':
 				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
 				createUserRow(res.user);
-				// lobbyArea.innerHTML += `<div id="user_${res.user.id}" class="lobbyUser">User ${res.user.username}.</div>`
-				// setTimeout(() => {
-				// 	const newItem = document.getElementById(`user_${res.user.id}`);
-				// 	newItem.classList.add("active");
-				// }, 10);
 				break;
 			case 'message':
 				chatBox.innerHTML += `<div class="list-group-item ${res.user.isSystem ? 'list-group-item-warning' : ''}"><h5 class="mb-1"><strong>${res.user.username}</strong>:</h5>${res.message}</div>`;
