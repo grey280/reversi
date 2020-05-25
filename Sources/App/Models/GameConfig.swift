@@ -10,9 +10,10 @@ import Vapor
 struct GameConfig: Encodable {
     typealias ID = UUID
     let username: String
-    let gameID: ID = UUID()
+    let gameID: ID
     
-    init(username: String){
+    init(username: String, gameID: ID = UUID()){
         self.username = username
+        self.gameID = gameID
     }
 }
