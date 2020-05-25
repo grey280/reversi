@@ -15,7 +15,7 @@ enum ChatEvent{
     case invite(from: ChatUser, to: ChatUser)
     case uninvite(from: ChatUser, to: ChatUser)
     case roomJoined(payload: JoinRoomResponse)
-    case accept(from: ChatUser, to: ChatUser)
+    case accept(from: ChatUser, to: ChatUser, gameID: Game.ID)
     
     enum ChatEventType: String, Codable {
         case userJoined
@@ -59,6 +59,7 @@ extension ChatEvent: Codable {
         case toUser
         case message
         case payload
+        case gameID
     }
     
     init(from decoder: Decoder) throws {
@@ -91,7 +92,8 @@ extension ChatEvent: Codable {
         case .accept:
             let fromUser = try container.decode(ChatUser.self, forKey: .user)
             let toUser = try container.decode(ChatUser.self, forKey: .toUser)
-            self = .accept(from: fromUser, to: toUser)
+            let gameID = try container.decode(Game.ID.self, forKey: .gameID)
+            self = .accept(from: fromUser, to: toUser, gameID: gameID)
         case .roomJoined:
             let payload = try container.decode(JoinRoomResponse.self, forKey: .payload)
             self = .roomJoined(payload: payload)
@@ -113,9 +115,13 @@ extension ChatEvent: Codable {
             try container.encode(fromUser, forKey: .user)
             try container.encode(toUser, forKey: .toUser)
             try container.encode(body, forKey: .message)
-        case .invite(let fromUser, let toUser), .uninvite(let fromUser, let toUser), .accept(let fromUser, let toUser):
+        case .invite(let fromUser, let toUser), .uninvite(let fromUser, let toUser):
             try container.encode(fromUser, forKey: .user)
             try container.encode(toUser, forKey: .toUser)
+        case .accept(let fromUser, let toUser, let gameID):
+            try container.encode(fromUser, forKey: .user)
+            try container.encode(toUser, forKey: .toUser)
+            try container.encode(gameID, forKey: .gameID)
         case .roomJoined(payload: let payload):
             try container.encode(payload, forKey: .payload)
         }
