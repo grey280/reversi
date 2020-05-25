@@ -68,14 +68,10 @@
 				for (const user of res.payload.membership){
 					createUserRow(user);
 				}
+				break;
 			case 'userJoined':
 				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
 				createUserRow(res.user);
-				// lobbyArea.innerHTML += `<div id="user_${res.user.id}" class="lobbyUser">User ${res.user.username}.</div>`
-				// setTimeout(() => {
-				// 	const newItem = document.getElementById(`user_${res.user.id}`);
-				// 	newItem.classList.add("active");
-				// }, 10);
 				break;
 			case 'message':
 				chatBox.innerHTML += `<div class="list-group-item ${res.user.isSystem ? 'list-group-item-warning' : ''}"><h5 class="mb-1"><strong>${res.user.username}</strong>:</h5>${res.message}</div>`;
@@ -102,7 +98,7 @@
 				if (fromUserRow){
 					const fromUserButton = fromUserRow.querySelector('button');
 					if (fromUserButton){
-						fromUserButton.onclick = null; // clear the old event
+						fromUserButton.onclick = () => accept(res.user);
 						fromUserButton.classList.remove('btn-primary');
 						fromUserButton.classList.add('btn-success');
 						fromUserButton.innerText = "Play";
@@ -142,6 +138,11 @@
 					}
 				}
 				break;
+			}
+			case 'accept': {
+				const gameID = res.gameID;
+				console.log("Received 'accept' event: ", res);
+				window.location.href = `game?username=${username}&gameID=${res.gameID}`;
 			}
 		}
 		console.log('handled')
@@ -201,6 +202,30 @@
 		var text = JSON.stringify(commandBody);
 		socket.send(text);
 		return false; // for event bubbling
+	}
+
+	function accept(user){
+		if (typeof user == 'string') user = JSON.parse(user); // I *still* hate this language
+		// Mark the game as starting
+		
+		const targetUserRow = document.querySelector(`\#userList \#user_${user.id}`);
+		if (targetUserRow){
+			const targetUserButton = targetUserRow.querySelector('button');
+			if (targetUserButton){
+				targetUserButton.onclick = null; // clear the event
+				targetUserButton.classList.remove('btn-success');
+				targetUserButton.classList.add('btn-outline-success');
+				targetUserButton.innerText = "Starting..."
+			}
+		}
+		// Send the command
+		var commandBody = {
+			command: 'accept',
+			user: user
+		};
+		var text = JSON.stringify(commandBody);
+		socket.send(text);
+		return false; // bubble bubble bubble
 	}
 
 	function createUserRow(user){

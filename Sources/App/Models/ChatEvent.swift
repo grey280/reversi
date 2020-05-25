@@ -15,6 +15,7 @@ enum ChatEvent{
     case invite(from: ChatUser, to: ChatUser)
     case uninvite(from: ChatUser, to: ChatUser)
     case roomJoined(payload: JoinRoomResponse)
+    case accept(from: ChatUser, to: ChatUser, gameID: GameConfig.ID)
     
     enum ChatEventType: String, Codable {
         case userJoined
@@ -23,6 +24,7 @@ enum ChatEvent{
         case userLeft
         case invite
         case uninvite
+        case accept
         case roomJoined
     }
 }
@@ -44,6 +46,8 @@ extension ChatEvent {
             return .uninvite
         case .roomJoined:
             return .roomJoined
+        case .accept:
+            return .accept
         }
     }
 }
@@ -55,6 +59,7 @@ extension ChatEvent: Codable {
         case toUser
         case message
         case payload
+        case gameID
     }
     
     init(from decoder: Decoder) throws {
@@ -84,6 +89,11 @@ extension ChatEvent: Codable {
             let fromUser = try container.decode(ChatUser.self, forKey: .user)
             let toUser = try container.decode(ChatUser.self, forKey: .toUser)
             self = .uninvite(from: fromUser, to: toUser)
+        case .accept:
+            let fromUser = try container.decode(ChatUser.self, forKey: .user)
+            let toUser = try container.decode(ChatUser.self, forKey: .toUser)
+            let gameID = try container.decode(GameConfig.ID.self, forKey: .gameID)
+            self = .accept(from: fromUser, to: toUser, gameID: gameID)
         case .roomJoined:
             let payload = try container.decode(JoinRoomResponse.self, forKey: .payload)
             self = .roomJoined(payload: payload)
@@ -108,6 +118,10 @@ extension ChatEvent: Codable {
         case .invite(let fromUser, let toUser), .uninvite(let fromUser, let toUser):
             try container.encode(fromUser, forKey: .user)
             try container.encode(toUser, forKey: .toUser)
+        case .accept(let fromUser, let toUser, let gameID):
+            try container.encode(fromUser, forKey: .user)
+            try container.encode(toUser, forKey: .toUser)
+            try container.encode(gameID, forKey: .gameID)
         case .roomJoined(payload: let payload):
             try container.encode(payload, forKey: .payload)
         }

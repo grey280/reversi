@@ -12,6 +12,7 @@ enum ChatCommand {
     case sendMessage(message: String)
     case invite(user: ChatUser)
     case uninvite(user: ChatUser)
+    case accept(user: ChatUser)
 }
 
 extension ChatCommand: Codable {
@@ -32,6 +33,9 @@ extension ChatCommand: Codable {
         case .uninvite:
             let user = try container.decode(ChatUser.self, forKey: .user)
             self = .uninvite(user: user)
+        case .accept:
+            let user = try container.decode(ChatUser.self, forKey: .user)
+            self = .accept(user: user)
         }
     }
     
@@ -51,6 +55,9 @@ extension ChatCommand: Codable {
         case .uninvite(let user):
             try container.encode(CommandType.uninvite.rawValue, forKey: .command)
             try container.encode(user, forKey: .user)
+        case .accept(user: let user):
+            try container.encode(CommandType.accept.rawValue, forKey: .command)
+            try container.encode(user, forKey: .user)
         }
     }
     
@@ -67,6 +74,7 @@ extension ChatCommand: Codable {
         case sendMessage
         case invite
         case uninvite
+        case accept
     }
     
 }

@@ -110,7 +110,7 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                 chatRoom.queue.send(.userJoined(user: asUser))
                 let subscription = chatRoom.queue.sink(receiveValue: { (event) in
                     switch (event){
-                    case .privateMessage(let fromUser, let toUser, _), .invite(from: let fromUser, to: let toUser), .uninvite(from: let fromUser, to: let toUser):
+                    case .privateMessage(let fromUser, let toUser, _), .invite(from: let fromUser, to: let toUser), .uninvite(from: let fromUser, to: let toUser), .accept(from: let fromUser, to: let toUser, gameID: _):
                         guard toUser == user || fromUser == user, let res = self.codableAsString(event) else {
                             return // not for you!
                         }
@@ -153,6 +153,16 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                     return
                 }
                 room.queue.send(.uninvite(from: user, to: toUser))
+            case .accept(user: let toUser):
+                guard let roomName = inRoom, let room = ChatController.rooms[roomName] else {
+                    print("Accept: user \(user?.username ?? "unnamed user") is not in a room.")
+                    return
+                }
+                guard let user = user else {
+                    print("Accept: 'from' user is not defined")
+                    return
+                }
+                room.queue.send(.accept(from: user, to: toUser, gameID: UUID()))
             }
         }
     }
