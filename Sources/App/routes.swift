@@ -25,7 +25,7 @@ func routes(_ app: Application) throws {
             name = "Anonymous_\(Int.random(in: 1..<100))"
         }
         name = name!.replacingOccurrences(of: "'", with: "")
-        guard let game: GameConfig.ID = req.query["game"] else {
+        guard let game: GameConfig.ID = req.query["gameID"] else {
             return req.view.render("lobby", User(username: name!))
         }
         return req.view.render("game", GameConfig(username: name!, gameID: game))
