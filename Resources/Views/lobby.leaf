@@ -68,6 +68,7 @@
 				for (const user of res.payload.membership){
 					createUserRow(user);
 				}
+				break;
 			case 'userJoined':
 				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
 				createUserRow(res.user);
@@ -206,7 +207,8 @@
 	function accept(user){
 		if (typeof user == 'string') user = JSON.parse(user); // I *still* hate this language
 		// Mark the game as starting
-		const targetUserRow = lobbyArea.querySelector(`\#user_${user.id}`);
+		
+		const targetUserRow = document.querySelector(`\#userList \#user_${user.id}`);
 		if (targetUserRow){
 			const targetUserButton = targetUserRow.querySelector('button');
 			if (targetUserButton){

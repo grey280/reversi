@@ -54,6 +54,7 @@
 				for (const user of res.payload.membership){
 					createUserRow(user);
 				}
+				break;
 			case 'userJoined':
 				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
 				break;
