@@ -138,6 +138,11 @@
 				}
 				break;
 			}
+			case 'accept': {
+				const gameID = res.gameID;
+				console.log("Received 'accept' event: ", res);
+				window.location.href = `game?username=${username}&gameID=${res.gameID}`;
+			}
 		}
 		console.log('handled')
 	}
