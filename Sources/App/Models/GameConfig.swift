@@ -7,7 +7,7 @@
 
 import Vapor
 
-struct Game: Encodable {
+struct GameConfig: Encodable {
     typealias ID = UUID
     let username: String
     let gameID: ID = UUID()
