@@ -172,6 +172,19 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                 newChatRoom = ChatController.rooms[newGame.id.uuidString]!
                 newChatRoom.game = newGame
                 room.queue.send(.accept(from: user, to: toUser, gameID: newGame.id))
+            case .play(x: let x, y: let y):
+                guard let roomName = inRoom, let room = ChatController.rooms[roomName], let game = room.game else {
+                    print("Accept: user \(user?.username ?? "unnamed user") is not in a gameplay room.")
+                    return
+                }
+                guard let user = user else {
+                    print("Accept: 'from' user is not defined")
+                    return
+                }
+                // TODO: Check if it's a valid move, other BOL stuff
+                let isUserWhite = game.white.username == user.username
+                game.board[x][y] = isUserWhite ? .white : .black
+                room.queue.send(.gameUpdate(game: game))
             }
         }
     }
