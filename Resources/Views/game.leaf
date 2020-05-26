@@ -20,45 +20,60 @@
 	<div class="col-md-8">
 		<div class="card">
 			<div class="card-header">
-
+				<div class="row">
+					<div class="col">
+						<img src="images/C.gif" class="img-fluid" id="whoami" style="max-width: 64px; max-height: 64px">
+					</div>
+					<div class="col">
+						White: <br>
+						<h3 id="whiteScore">0</h3>
+					</div>
+					<div class="col">
+						Black: <br>
+						<h3 id="blackScore">0</h3>
+					</div>
+					<div class="col text-right">
+						<a class="btn btn-outline-danger" href="lobby?username=#(username)">Quit</a>
+					</div>
+				</div>
 			</div>
 			<div class="card-body">
 				<table class="table">
 					#for(y in range):
 					<tr>
 						#for(x in range):
-							<td id="#(x)_#(y)" class="p-0">
-								<img src="images/C.gif" class="img-fluid" style="max-width: 64px; max-height: 64px">
+						<td id="#(x)_#(y)" class="p-0">
+							<img src="images/C.gif" class="img-fluid" style="max-width: 64px; max-height: 64px">
+							#endfor
+						</tr>
 						#endfor
-					</tr>
-					#endfor
-				</table>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-4">
-		<div class="card">
-			<h1 class="card-header">Chat</h1>
-			<div class="card-body overflow-auto">
-				<div class="list-group list-group-flush" id="chatBox">
-					<!-- content to be provided by javascript -->
+					</table>
 				</div>
 			</div>
-			<div class="card-footer">
-				<div class="input-group mb-3">
-					<input id="textBox" type="text" class="form-control" placeholder="Message..." aria-label="Chat message" aria-describedby="sendButton">
-					<div class="input-group-append">
-						<button class="btn btn-outline-primary" type="button" id="sendButton" onClick="sendMessage()">Send</button>
+		</div>
+		<div class="col-md-4">
+			<div class="card">
+				<h1 class="card-header">Chat</h1>
+				<div class="card-body overflow-auto">
+					<div class="list-group list-group-flush" id="chatBox">
+						<!-- content to be provided by javascript -->
+					</div>
+				</div>
+				<div class="card-footer">
+					<div class="input-group mb-3">
+						<input id="textBox" type="text" class="form-control" placeholder="Message..." aria-label="Chat message" aria-describedby="sendButton">
+						<div class="input-group-append">
+							<button class="btn btn-outline-primary" type="button" id="sendButton" onClick="sendMessage()">Send</button>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<script>
-	const username = '#(username)';
-	let url = `ws://${window.location.host}/socket`;
-	if (window.location.hostname != 'localhost'){
+	<script>
+		const username = '#(username)';
+		let url = `ws://${window.location.host}/socket`;
+		if (window.location.hostname != 'localhost'){
 		url = url.replace('ws://', 'wss://') // can't use WSS when running locally, but on Heroku, it's fine
 	}
 	console.group('Socket Setup')
@@ -74,71 +89,78 @@
 		switch (res.type){
 			case 'roomJoined':
 				// const gameBoard = document.querySelector('table');
-				if (res.payload.game && res.payload.game.board){
-					for (const x of [0,1,2,3,4,5,6,7]){
-						for (const y of [0,1,2,3,4,5,6,7]){
-							const image = document.getElementById(`${x}_${y}`).querySelector('img');
-							switch (res.payload.game.board[x][y]){
-								case 'white':
-								image.src = "images/C-W.gif";
-								break;
-								case 'black':
-								image.src = "images/C-B.gif";
-								break;
-								case 'error':
-								image.src = "images/E.gif";
-								break;
-								default:
-								image.src = "images/C.gif";
-								break;
+				if (res.payload.game){
+					const whoAmI = document.getElementById('whoami');
+					if (whoAmI){
+						whoAmI.src = res.payload.game.white.username == username ? 'images/C-W.gif' : 'images/C-B.gif';
+					}
+
+					if (res.payload.game.board){
+						for (const x of [0,1,2,3,4,5,6,7]){
+							for (const y of [0,1,2,3,4,5,6,7]){
+								const image = document.getElementById(`${x}_${y}`).querySelector('img');
+								switch (res.payload.game.board[x][y]){
+									case 'white':
+										image.src = "images/C-W.gif";
+										break;
+									case 'black':
+										image.src = "images/C-B.gif";
+										break;
+									case 'error':
+										image.src = "images/E.gif";
+										break;
+									default:
+										image.src = "images/C.gif";
+										break;
+								}
 							}
 						}
 					}
 				}
 				break;
-			case 'userJoined':
-				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
-				break;
-			case 'message':
+				case 'userJoined':
+					chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
+					break;
+				case 'message':
 				chatBox.innerHTML += `<div class="list-group-item ${res.user.isSystem ? 'list-group-item-warning' : ''}"><h5 class="mb-1"><strong>${res.user.username}</strong>:</h5>${res.message}</div>`;
-				break;
-			case 'privateMessage':
+					break;
+				case 'privateMessage':
 				chatBox.innerHTML += `<div class="list-group-item ${res.user.isSystem ? 'list-group-item-warning' : 'list-group-item-info'}"><h5 class="mb-1"><strong>${res.user.username}</strong> to <strong>${res.toUser.username}</strong>:</h5>${res.message}</div>`;
-				break;
-			case 'userLeft':
-				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> left the chat.</p></div>`;
-				break;
-			case 'invite': 
-			case 'uninvite': {
-				console.error(`received invalid event type: ${res.type}`, res);
-				break;
+					break;
+				case 'userLeft':
+					chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> left the chat.</p></div>`;
+					break;
+				case 'invite': 
+				case 'uninvite': {
+					console.error(`received invalid event type: ${res.type}`, res);
+					break;
+				}
+			}
+			console.log('handled')
+		}
+
+		socket.onopen = () => {
+			console.group('Socket.onOpen');
+			var joinRoomCommand = {
+				command: 'joinRoom',
+				room: '#(gameID)',
+				username: username
+			}
+			var text = JSON.stringify(joinRoomCommand)
+			console.log('converting object to JSON:', joinRoomCommand, text)
+			socket.send(text)
+			console.groupEnd();
+
+			document.getElementById('textBox').onkeydown = (e) => {
+				if (e.keyCode == 13){
+					sendMessage()
+					e.preventDefault()
+				}
 			}
 		}
-		console.log('handled')
-	}
 
-	socket.onopen = () => {
-		console.group('Socket.onOpen');
-		var joinRoomCommand = {
-			command: 'joinRoom',
-			room: '#(gameID)',
-			username: username
-		}
-		var text = JSON.stringify(joinRoomCommand)
-		console.log('converting object to JSON:', joinRoomCommand, text)
-		socket.send(text)
-		console.groupEnd();
-
-		document.getElementById('textBox').onkeydown = (e) => {
-			if (e.keyCode == 13){
-				sendMessage()
-				e.preventDefault()
-			}
-		}
-	}
-
-	function sendMessage(){
-		const textBox = document.getElementById('textBox');
+		function sendMessage(){
+			const textBox = document.getElementById('textBox');
 		if (!textBox.value) return; // no blank messages, thanks
 		var messageBody = {
 			command: 'sendMessage',
