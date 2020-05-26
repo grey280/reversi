@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Game {
+final class Game {
     var board: [[Token]]
     var lastMove: Date
     var whoseTurn: Player
@@ -18,6 +18,8 @@ class Game {
         board = [[Token]](repeating: [Token](repeating: .clear, count: 8), count: 8)
     }
 }
+
+extension Game: Codable { }
 
 enum Token: String, Codable {
     case black, white, clear, error
