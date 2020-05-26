@@ -20,6 +20,10 @@ final class Game {
         lastMove = Date()
         whoseTurn = .white
         board = [[Token]](repeating: [Token](repeating: .clear, count: 8), count: 8)
+        board[3][3] = .white
+        board[3][4] = .black
+        board[4][3] = .black
+        board[4][4] = .white
         self.white = white
         self.black = black
         self.id = id
