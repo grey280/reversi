@@ -5,6 +5,14 @@
 	\#chatBox {
 		max-height: 800px;
 	}
+	table td {
+		border-right: 2px solid black;
+	}
+	table {
+		border-right: 2px solid black;
+		border-left: 2px solid black;
+		border-bottom: 2px solid black;
+	}
 </style>
 #endexport
 #export("body"):
@@ -18,9 +26,9 @@
 				<table class="table">
 					#for(y in range):
 					<tr>
-							<td id="#(x)_#(y)">
-								<img src="images/C.gif">
 						#for(x in range):
+							<td id="#(x)_#(y)" class="p-0">
+								<img src="images/C.gif" class="img-fluid" style="max-width: 64px; max-height: 64px">
 						#endfor
 					</tr>
 					#endfor
