@@ -14,13 +14,15 @@ final class Game {
     
     let white: ChatUser
     let black: ChatUser
+    let id: GameConfig.ID
     
-    init(white: ChatUser, black: ChatUser){
+    init(white: ChatUser, black: ChatUser, id: GameConfig.ID = UUID()){
         lastMove = Date()
         whoseTurn = .white
         board = [[Token]](repeating: [Token](repeating: .clear, count: 8), count: 8)
         self.white = white
         self.black = black
+        self.id = id
     }
 }
 
