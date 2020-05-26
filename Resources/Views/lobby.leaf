@@ -152,7 +152,7 @@
 		console.group('Socket.onOpen');
 		var joinRoomCommand = {
 			command: 'joinRoom',
-			room: 'default',
+			room: '#ChatRoom.lobby',
 			username: username
 		}
 		var text = JSON.stringify(joinRoomCommand)

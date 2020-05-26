@@ -15,4 +15,8 @@ class ChatRoom {
     var userCount: Int {
         users.count
     }
+    
+    static var lobby: String {
+        "lobby"
+    }
 }
