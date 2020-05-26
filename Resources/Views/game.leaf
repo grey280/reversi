@@ -113,6 +113,7 @@
 									break;
 									default:
 									image.src = "images/C.gif";
+									image.onclick = () => play(x,y);
 									break;
 								}
 							}
@@ -173,6 +174,19 @@
 		var text = JSON.stringify(messageBody)
 		socket.send(text);
 		textBox.value = "";
+		return false;
+	}
+
+	function play(x, y){
+		if (typeof x != 'number' || typeof y !- 'number') return;
+		var command = {
+			command: 'play',
+			x: x,
+			y: y
+		}
+		console.log('sending move: ', command);
+		var text = JSON.stringify(command);
+		socket.send(text);
 		return false;
 	}
 </script> 
