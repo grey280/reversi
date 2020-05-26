@@ -119,7 +119,7 @@
 										break;
 									default:
 										image.src = "images/C.gif";
-										image.onclick = () => play(x,y);
+										image.onclick = () => { play(x,y); }
 										break;
 								}
 							}
@@ -167,7 +167,7 @@
 										} else {
 											image.src = "images/C.gif";
 										}
-										image.onclick = () => play(x, y);
+										image.onclick = () => { play(x, y); }
 										break;
 									case 'error':
 										image.src = "images/E.gif";
@@ -234,7 +234,7 @@
 	}
 
 	function play(x, y){
-		if (typeof x != 'number' || typeof y !- 'number') return;
+		if (typeof x != 'number' || typeof y != 'number') return;
 		var command = {
 			command: 'play',
 			x: x,
