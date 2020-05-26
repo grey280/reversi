@@ -11,6 +11,7 @@ import OpenCombine
 class ChatRoom {
     let queue = PassthroughSubject<ChatEvent, Never>()
     var users: Set<ChatUser> = []
+    var game: Game?
     
     var userCount: Int {
         users.count
