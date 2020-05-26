@@ -12,10 +12,15 @@ final class Game {
     var lastMove: Date
     var whoseTurn: Player
     
-    init(){
+    let white: ChatUser
+    let black: ChatUser
+    
+    init(white: ChatUser, black: ChatUser){
         lastMove = Date()
         whoseTurn = .white
         board = [[Token]](repeating: [Token](repeating: .clear, count: 8), count: 8)
+        self.white = white
+        self.black = black
     }
 }
 
