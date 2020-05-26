@@ -73,8 +73,27 @@
 		const lobbyArea = document.getElementById('userList');
 		switch (res.type){
 			case 'roomJoined':
-				for (const user of res.payload.membership){
-					createUserRow(user);
+				// const gameBoard = document.querySelector('table');
+				if (res.payload.game && res.payload.game.board){
+					for (const x of [0,1,2,3,4,5,6,7]){
+						for (const y of [0,1,2,3,4,5,6,7]){
+							const image = document.getElementById(`${x}_${y}`).querySelector('img');
+							switch (res.payload.game.board[x][y]){
+								case 'white':
+								image.src = "images/C-W.gif";
+								break;
+								case 'black':
+								image.src = "images/C-B.gif";
+								break;
+								case 'error':
+								image.src = "images/E.gif";
+								break;
+								default:
+								image.src = "images/C.gif";
+								break;
+							}
+						}
+					}
 				}
 				break;
 			case 'userJoined':
