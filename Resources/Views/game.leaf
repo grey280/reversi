@@ -82,6 +82,7 @@
 	console.log('Connecting to ' + url)
 	console.groupEnd();
 	var socket = new WebSocket(url);
+	var previousBoard = [[]]
 
 	socket.onmessage = (e) => {
 		console.log(e.data);
@@ -98,26 +99,33 @@
 					}
 
 					if (res.payload.game.board){
+						var wCount = 0;
+						var bCount = 0;
+						previousBoard = res.payload.game.board;
 						for (const x of [0,1,2,3,4,5,6,7]){
 							for (const y of [0,1,2,3,4,5,6,7]){
 								const image = document.getElementById(`${x}_${y}`).querySelector('img');
 								switch (res.payload.game.board[x][y]){
 									case 'white':
-									image.src = "images/C-W.gif";
-									break;
+										image.src = "images/C-W.gif";
+										wCount++;
+										break;
 									case 'black':
-									image.src = "images/C-B.gif";
-									break;
+										image.src = "images/C-B.gif";
+										bCount++;
+										break;
 									case 'error':
-									image.src = "images/E.gif";
-									break;
+										image.src = "images/E.gif";
+										break;
 									default:
-									image.src = "images/C.gif";
-									image.onclick = () => play(x,y);
-									break;
+										image.src = "images/C.gif";
+										image.onclick = () => play(x,y);
+										break;
 								}
 							}
 						}
+						document.getElementById('whiteScore').innerText = wCount;
+						document.getElementById('blackScore').innerText = bCount;
 					}
 				}
 				break;
@@ -134,6 +142,54 @@
 			case 'userLeft':
 				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> left the chat.</p></div>`;
 				break;
+			case 'gameUpdate':
+				if (res.game.board){
+					var wCount = 0;
+					var bCount = 0;
+					for (const x of [0,1,2,3,4,5,6,7]){
+						for (const y of [0,1,2,3,4,5,6,7]){
+							const image = document.getElementById(`${x}_${y}`).querySelector('img');
+							if (res.game.board[x][y] != previousBoard[x][y]){
+								switch (res.game.board[x][y]){
+									case 'white':
+										image.src = previousBoard[x][y] == 'black' ? "images/B-W.gif" : "images/C-W.gif";
+										image.onclick = null;
+										break;
+									case 'black':
+										image.src = previousBoard[x][y] == 'white' ? "images/W-B.gif" : "images/C-B.gif";
+										image.onclick = null;
+										break;
+									case 'clear':
+										if (previousBoard[x][y] == 'white'){
+											image.src = "images/W-C.gif"
+										} else if (previousBoard[x][y] == 'black'){
+											image.src = "images/B-C.gif"
+										} else {
+											image.src = "images/C.gif";
+										}
+										image.onclick = () => play(x, y);
+										break;
+									case 'error':
+										image.src = "images/E.gif";
+										image.onclick = null;
+										break;
+								}
+							}
+							switch (res.game.board[x][y]){
+								case 'white':
+									wCount++;
+									break;
+								case 'black':
+									bCount++;
+									break;
+							}
+						}
+					}
+					document.getElementById('whiteScore').innerText = wCount;
+					document.getElementById('blackScore').innerText = bCount;
+					previousBoard = res.game.board;
+				}
+				break;	
 			case 'invite': 
 			case 'uninvite': {
 				console.error(`received invalid event type: ${res.type}`, res);
