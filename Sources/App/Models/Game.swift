@@ -10,3 +10,7 @@ import Foundation
 class Game {
     
 }
+
+enum Token: String, Codable {
+    case Black, White, Clear, Error
+}
