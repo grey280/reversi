@@ -16,11 +16,11 @@
 			</div>
 			<div class="card-body">
 				<table class="table">
-					#for(y in 0..<8):
+					#for(y in range):
 					<tr>
-						#for(x in 0..<8):
 							<td id="#(x)_#(y)">
 								<img src="images/C.gif">
+						#for(x in range):
 						#endfor
 					</tr>
 					#endfor
