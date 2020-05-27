@@ -149,31 +149,38 @@
 					for (const x of [0,1,2,3,4,5,6,7]){
 						for (const y of [0,1,2,3,4,5,6,7]){
 							const image = document.getElementById(`${x}_${y}`).querySelector('img');
+							let imageurl = image.src;
+							let didChange = false;
 							if (res.game.board[x][y] != previousBoard[x][y]){
+								didChange = true;
 								switch (res.game.board[x][y]){
 									case 'white':
-										image.src = previousBoard[x][y] == 'black' ? "images/B-W.gif" : "images/C-W.gif";
+										imageurl = previousBoard[x][y] == 'black' ? "images/B-W.gif" : "images/C-W.gif";
 										image.onclick = null;
 										break;
 									case 'black':
-										image.src = previousBoard[x][y] == 'white' ? "images/W-B.gif" : "images/C-B.gif";
+										imageurl = previousBoard[x][y] == 'white' ? "images/W-B.gif" : "images/C-B.gif";
 										image.onclick = null;
 										break;
 									case 'clear':
 										if (previousBoard[x][y] == 'white'){
-											image.src = "images/W-C.gif"
+											imageurl = "images/W-C.gif"
 										} else if (previousBoard[x][y] == 'black'){
-											image.src = "images/B-C.gif"
+											imageurl = "images/B-C.gif"
 										} else {
-											image.src = "images/C.gif";
+											imageurl = "images/C.gif";
 										}
 										image.onclick = () => { play(x, y); }
 										break;
 									case 'error':
-										image.src = "images/E.gif";
+										imageurl = "images/E.gif";
 										image.onclick = null;
 										break;
 								}
+							}
+							if (didChange) {
+								imageurl = imageurl + '?d=' + (new Date()).getTime();
+								image.src = imageurl;
 							}
 							switch (res.game.board[x][y]){
 								case 'white':
