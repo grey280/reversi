@@ -99,8 +99,6 @@
 					}
 
 					if (res.payload.game.board){
-						var wCount = 0;
-						var bCount = 0;
 						previousBoard = res.payload.game.board;
 						for (const x of [0,1,2,3,4,5,6,7]){
 							for (const y of [0,1,2,3,4,5,6,7]){
@@ -108,11 +106,9 @@
 								switch (res.payload.game.board[x][y]){
 									case 'white':
 										image.src = "images/C-W.gif";
-										wCount++;
 										break;
 									case 'black':
 										image.src = "images/C-B.gif";
-										bCount++;
 										break;
 									case 'error':
 										image.src = "images/E.gif";
@@ -124,8 +120,8 @@
 								}
 							}
 						}
-						document.getElementById('whiteScore').innerText = wCount;
-						document.getElementById('blackScore').innerText = bCount;
+						document.getElementById('whiteScore').innerText = res.payload.game.whiteCount;
+						document.getElementById('blackScore').innerText = res.payload.game.blackCount;
 					}
 				}
 				break;
@@ -144,8 +140,6 @@
 				break;
 			case 'gameUpdate':
 				if (res.game.board){
-					var wCount = 0;
-					var bCount = 0;
 					for (const x of [0,1,2,3,4,5,6,7]){
 						for (const y of [0,1,2,3,4,5,6,7]){
 							const image = document.getElementById(`${x}_${y}`).querySelector('img');
@@ -184,16 +178,14 @@
 							}
 							switch (res.game.board[x][y]){
 								case 'white':
-									wCount++;
 									break;
 								case 'black':
-									bCount++;
 									break;
 							}
 						}
 					}
-					document.getElementById('whiteScore').innerText = wCount;
-					document.getElementById('blackScore').innerText = bCount;
+					document.getElementById('whiteScore').innerText = res.game.whiteCount;
+					document.getElementById('blackScore').innerText = res.game.blackCount;
 					previousBoard = res.game.board;
 				}
 				break;	
