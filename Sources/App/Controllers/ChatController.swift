@@ -162,7 +162,7 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                     print("Accept: 'from' user is not defined")
                     return
                 }
-                let randomized: Bool = Int.random(in: 0..<2) == 0
+                let randomized = Bool.random()
                 let newGame = Game(white: randomized ? user : toUser, black: randomized ? toUser : user)
                 // create the room in advance, so it'll be there
                 let newChatRoom: ChatRoom
