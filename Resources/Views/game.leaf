@@ -5,16 +5,54 @@
 	\#chatBox {
 		max-height: 800px;
 	}
+	table td {
+		border-right: 2px solid black;
+	}
+	table {
+		border-right: 2px solid black;
+		border-left: 2px solid black;
+		border-bottom: 2px solid black;
+	}
 </style>
 #endexport
 #export("body"):
 <div class="row">
-	<div class="col-md-8">
-		<div class="card">
-			<h1>Hey! This would be the game board!</h1>
+	<div class="col-lg-8">
+		<div class="card mb-2">
+			<div class="card-header" id="gameHeader">
+				<div class="row">
+					<div class="col">
+						<img src="images/C.gif" class="img-fluid" id="whoami" style="max-width: 64px; max-height: 64px">
+					</div>
+					<div class="col">
+						White: <br>
+						<h3 id="whiteScore">0</h3>
+					</div>
+					<div class="col">
+						Black: <br>
+						<h3 id="blackScore">0</h3>
+					</div>
+					<div class="col text-right">
+						<a class="btn btn-outline-danger" href="lobby?username=#(username)">Quit</a>
+					</div>
+				</div>
+			</div>
+			<div class="card-body">
+				<table class="table">
+					#for(y in range):
+					<tr>
+						#for(x in range):
+						<td id="#(x)_#(y)" class="p-0 text-center">
+							<img src="images/C.gif" class="img-fluid" style="max-width: 64px; max-height: 64px">
+						</td>
+						#endfor
+						#endfor
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>
-	<div class="col-md-4">
+	<div class="col-lg-4">
 		<div class="card">
 			<h1 class="card-header">Chat</h1>
 			<div class="card-body overflow-auto">
@@ -44,17 +82,50 @@
 	console.log('Connecting to ' + url)
 	console.groupEnd();
 	var socket = new WebSocket(url);
+	var previousBoard = [[]]
+
 	socket.onmessage = (e) => {
-		console.log(e.data);
 		const res = JSON.parse(e.data);
+		console.log(res);
 		const chatBox = document.getElementById('chatBox');
 		const lobbyArea = document.getElementById('userList');
 		switch (res.type){
-			case 'roomJoined':
-				for (const user of res.payload.membership){
-					createUserRow(user);
+			case 'roomJoined': {
+				// const gameBoard = document.querySelector('table');
+				if (res.payload.game){
+					const whoAmI = document.getElementById('whoami');
+					if (whoAmI){
+						whoAmI.src = res.payload.game.white.username == username ? 'images/C-W.gif' : 'images/C-B.gif';
+					}
+
+					if (res.payload.game.board){
+						previousBoard = res.payload.game.board;
+						for (const x of [0,1,2,3,4,5,6,7]){
+							for (const y of [0,1,2,3,4,5,6,7]){
+								const image = document.getElementById(`${x}_${y}`).querySelector('img');
+								switch (res.payload.game.board[x][y]){
+									case 'white':
+										image.src = "images/C-W.gif";
+										break;
+									case 'black':
+										image.src = "images/C-B.gif";
+										break;
+									case 'error':
+										image.src = "images/E.gif";
+										break;
+									default:
+										image.src = "images/C.gif";
+										image.onclick = () => { play(x,y); }
+										break;
+								}
+							}
+						}
+						document.getElementById('whiteScore').innerText = res.payload.game.whiteCount;
+						document.getElementById('blackScore').innerText = res.payload.game.blackCount;
+					}
 				}
 				break;
+			}
 			case 'userJoined':
 				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> joined the chat.</p></div>`;
 				break;
@@ -67,6 +138,60 @@
 			case 'userLeft':
 				chatBox.innerHTML += `<div class="list-group-item"><p><strong>${res.user.username}</strong> left the chat.</p></div>`;
 				break;
+			case 'gameUpdate':
+				if (res.game.board){
+					for (const x of [0,1,2,3,4,5,6,7]){
+						for (const y of [0,1,2,3,4,5,6,7]){
+							const image = document.getElementById(`${x}_${y}`).querySelector('img');
+							let imageurl = image.src;
+							let didChange = false;
+							if (res.game.board[x][y] != previousBoard[x][y]){
+								didChange = true;
+								switch (res.game.board[x][y]){
+									case 'white':
+										imageurl = previousBoard[x][y] == 'black' ? "images/B-W.gif" : "images/C-W.gif";
+										image.onclick = null;
+										break;
+									case 'black':
+										imageurl = previousBoard[x][y] == 'white' ? "images/W-B.gif" : "images/C-B.gif";
+										image.onclick = null;
+										break;
+									case 'clear':
+										if (previousBoard[x][y] == 'white'){
+											imageurl = "images/W-C.gif"
+										} else if (previousBoard[x][y] == 'black'){
+											imageurl = "images/B-C.gif"
+										} else {
+											imageurl = "images/C.gif";
+										}
+										image.onclick = () => { play(x, y); }
+										break;
+									case 'error':
+										imageurl = "images/E.gif";
+										image.onclick = null;
+										break;
+								}
+							}
+							if (didChange) {
+								imageurl = imageurl + '?d=' + (new Date()).getTime();
+								image.src = imageurl;
+							}
+							switch (res.game.board[x][y]){
+								case 'white':
+									break;
+								case 'black':
+									break;
+							}
+						}
+					}
+					document.getElementById('whiteScore').innerText = res.game.whiteCount;
+					document.getElementById('blackScore').innerText = res.game.blackCount;
+					if (res.game.isGameOver){
+						document.getElementById('gameHeader').innerHTML += `<div class="row mt-2"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
+					}
+					previousBoard = res.game.board;
+				}
+				break;	
 			case 'invite': 
 			case 'uninvite': {
 				console.error(`received invalid event type: ${res.type}`, res);
@@ -80,7 +205,7 @@
 		console.group('Socket.onOpen');
 		var joinRoomCommand = {
 			command: 'joinRoom',
-			room: '#gameID',
+			room: '#(gameID)',
 			username: username
 		}
 		var text = JSON.stringify(joinRoomCommand)
@@ -107,6 +232,19 @@
 		var text = JSON.stringify(messageBody)
 		socket.send(text);
 		textBox.value = "";
+		return false;
+	}
+
+	function play(x, y){
+		if (typeof x != 'number' || typeof y != 'number') return;
+		var command = {
+			command: 'play',
+			x: x,
+			y: y
+		}
+		console.log('sending move: ', command);
+		var text = JSON.stringify(command);
+		socket.send(text);
 		return false;
 	}
 </script> 

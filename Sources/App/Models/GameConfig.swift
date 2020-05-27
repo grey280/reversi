@@ -16,4 +16,6 @@ struct GameConfig: Encodable {
         self.username = username
         self.gameID = gameID
     }
+    
+    let range = [0,1,2,3,4,5,6,7]
 }

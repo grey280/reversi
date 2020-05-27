@@ -123,7 +123,7 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                     }
                 })
                 self.subscriptions.append(subscription)
-                let result: JoinRoomResponse = .success(room: room, username: username, membership: Array(chatRoom.users))
+                let result: JoinRoomResponse = .success(room: room, username: username, membership: Array(chatRoom.users), game: chatRoom.game)
                 guard let asString = self.codableAsString(ChatEvent.roomJoined(payload: result)) else {
                     return
                 }
@@ -162,7 +162,29 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                     print("Accept: 'from' user is not defined")
                     return
                 }
-                room.queue.send(.accept(from: user, to: toUser, gameID: UUID()))
+                let randomized: Bool = arc4random_uniform(2) == 0
+                let newGame = Game(white: randomized ? user : toUser, black: randomized ? toUser : user)
+                // create the room in advance, so it'll be there
+                let newChatRoom: ChatRoom
+                if ChatController.rooms[newGame.id.uuidString] == nil {
+                    ChatController.rooms[newGame.id.uuidString] = ChatRoom()
+                }
+                newChatRoom = ChatController.rooms[newGame.id.uuidString]!
+                newChatRoom.game = newGame
+                room.queue.send(.accept(from: user, to: toUser, gameID: newGame.id))
+            case .play(x: let x, y: let y):
+                guard let roomName = inRoom, let room = ChatController.rooms[roomName], let game = room.game else {
+                    print("Accept: user \(user?.username ?? "unnamed user") is not in a gameplay room.")
+                    return
+                }
+                guard let user = user else {
+                    print("Accept: 'from' user is not defined")
+                    return
+                }
+                // TODO: Check if it's a valid move, other BOL stuff
+                let isUserWhite = game.white.username == user.username
+                game.board[x][y] = isUserWhite ? .white : .black
+                room.queue.send(.gameUpdate(game: game))
             }
         }
     }

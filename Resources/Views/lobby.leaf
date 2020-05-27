@@ -18,7 +18,7 @@
 #export("body"):
 <div class="row">
 	<div class="col-md-8">
-		<div class="card">
+		<div class="card mb-2">
 			<h1 class="card-header">Lobby</h1>
 			<div class="card-body">
 				<h2>Hello, #(username)!</h2>
@@ -152,7 +152,7 @@
 		console.group('Socket.onOpen');
 		var joinRoomCommand = {
 			command: 'joinRoom',
-			room: 'default',
+			room: '#ChatRoom.lobby',
 			username: username
 		}
 		var text = JSON.stringify(joinRoomCommand)

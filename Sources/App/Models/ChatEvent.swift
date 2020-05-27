@@ -16,6 +16,7 @@ enum ChatEvent{
     case uninvite(from: ChatUser, to: ChatUser)
     case roomJoined(payload: JoinRoomResponse)
     case accept(from: ChatUser, to: ChatUser, gameID: GameConfig.ID)
+    case gameUpdate(game: Game)
     
     enum ChatEventType: String, Codable {
         case userJoined
@@ -26,6 +27,7 @@ enum ChatEvent{
         case uninvite
         case accept
         case roomJoined
+        case gameUpdate
     }
 }
 
@@ -48,6 +50,8 @@ extension ChatEvent {
             return .roomJoined
         case .accept:
             return .accept
+        case .gameUpdate:
+            return .gameUpdate
         }
     }
 }
@@ -60,6 +64,7 @@ extension ChatEvent: Codable {
         case message
         case payload
         case gameID
+        case game
     }
     
     init(from decoder: Decoder) throws {
@@ -97,6 +102,9 @@ extension ChatEvent: Codable {
         case .roomJoined:
             let payload = try container.decode(JoinRoomResponse.self, forKey: .payload)
             self = .roomJoined(payload: payload)
+        case .gameUpdate:
+            let game = try container.decode(Game.self, forKey: .game)
+            self = .gameUpdate(game: game)
         }
     }
     
@@ -124,6 +132,8 @@ extension ChatEvent: Codable {
             try container.encode(gameID, forKey: .gameID)
         case .roomJoined(payload: let payload):
             try container.encode(payload, forKey: .payload)
+        case .gameUpdate(game: let game):
+            try container.encode(game, forKey: .game)
         }
     }
 }

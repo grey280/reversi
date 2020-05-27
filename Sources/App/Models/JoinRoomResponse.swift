@@ -7,7 +7,7 @@
 
 import Foundation
 enum JoinRoomResponse {
-    case success(room: String, username: String, membership: [ChatUser])
+    case success(room: String, username: String, membership: [ChatUser], game: Game?)
     case failure(message: String)
 }
 
@@ -20,7 +20,8 @@ extension JoinRoomResponse: Codable {
             let room = try container.decode(String.self, forKey: .room)
             let username = try container.decode(String.self, forKey: .username)
             let membership = try container.decode([ChatUser].self, forKey: .membership)
-            self = .success(room: room, username: username, membership: membership)
+            let game = try? container.decode(Game.self, forKey: .game)
+            self = .success(room: room, username: username, membership: membership, game: game)
         case .failure:
             let message = try container.decode(String.self, forKey: .message)
             self = .failure(message: message)
@@ -30,11 +31,14 @@ extension JoinRoomResponse: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
-        case .success(let room, let username, let membership):
+        case .success(let room, let username, let membership, let game):
             try container.encode(JoinRoomResponseState.success.rawValue, forKey: .state)
             try container.encode(room, forKey: .room)
             try container.encode(username, forKey: .username)
             try container.encode(membership, forKey: .membership)
+            if let game = game {
+                try container.encode(game, forKey: .game)
+            }
         case .failure(let message):
             try container.encode(JoinRoomResponseState.failure.rawValue, forKey: .state)
             try container.encode(message, forKey: .message)
@@ -47,6 +51,7 @@ extension JoinRoomResponse: Codable {
         case username
         case membership
         case message
+        case game
     }
     
     fileprivate enum JoinRoomResponseState: String, Codable {
