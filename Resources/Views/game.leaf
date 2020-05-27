@@ -19,7 +19,7 @@
 <div class="row">
 	<div class="col-md-8">
 		<div class="card">
-			<div class="card-header">
+			<div class="card-header" id="gameHeader">
 				<div class="row">
 					<div class="col">
 						<img src="images/C.gif" class="img-fluid" id="whoami" style="max-width: 64px; max-height: 64px">
@@ -186,6 +186,9 @@
 					}
 					document.getElementById('whiteScore').innerText = res.game.whiteCount;
 					document.getElementById('blackScore').innerText = res.game.blackCount;
+					if (res.game.isGameOver){
+						document.getElementById('gameHeader')innerHTML += `<div class="row"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
+					}
 					previousBoard = res.game.board;
 				}
 				break;	
