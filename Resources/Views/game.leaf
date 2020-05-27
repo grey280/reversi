@@ -85,8 +85,8 @@
 	var previousBoard = [[]]
 
 	socket.onmessage = (e) => {
-		console.log(e.data);
 		const res = JSON.parse(e.data);
+		console.log(res);
 		const chatBox = document.getElementById('chatBox');
 		const lobbyArea = document.getElementById('userList');
 		switch (res.type){
