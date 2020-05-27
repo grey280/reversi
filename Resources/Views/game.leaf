@@ -187,7 +187,7 @@
 					document.getElementById('whiteScore').innerText = res.game.whiteCount;
 					document.getElementById('blackScore').innerText = res.game.blackCount;
 					if (res.game.isGameOver){
-						document.getElementById('gameHeader')innerHTML += `<div class="row"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
+						document.getElementById('gameHeader').innerHTML += `<div class="row"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
 					}
 					previousBoard = res.game.board;
 				}
