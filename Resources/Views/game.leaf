@@ -17,8 +17,8 @@
 #endexport
 #export("body"):
 <div class="row">
-	<div class="col-md-8">
-		<div class="card">
+	<div class="col-lg-8">
+		<div class="card mb-2">
 			<div class="card-header" id="gameHeader">
 				<div class="row">
 					<div class="col">
@@ -52,7 +52,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-md-4">
+	<div class="col-lg-4">
 		<div class="card">
 			<h1 class="card-header">Chat</h1>
 			<div class="card-body overflow-auto">
@@ -187,7 +187,7 @@
 					document.getElementById('whiteScore').innerText = res.game.whiteCount;
 					document.getElementById('blackScore').innerText = res.game.blackCount;
 					if (res.game.isGameOver){
-						document.getElementById('gameHeader').innerHTML += `<div class="row"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
+						document.getElementById('gameHeader').innerHTML += `<div class="row mt-2"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
 					}
 					previousBoard = res.game.board;
 				}
