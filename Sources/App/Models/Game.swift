@@ -8,9 +8,15 @@
 import Foundation
 
 final class Game {
+    enum PlayMode {
+        case normal, edgesAreYou
+    }
+    
     private var board: [[Token]]
     var lastMove: Date
     var whoseTurn: Player
+    
+    let playMode: PlayMode
     
     let white: ChatUser
     let black: ChatUser
@@ -53,7 +59,7 @@ final class Game {
         return true
     }
     
-    init(white: ChatUser, black: ChatUser, id: GameConfig.ID = UUID()){
+    init(white: ChatUser, black: ChatUser, id: GameConfig.ID = UUID(), playMode: PlayMode = .edgesAreYou){
         lastMove = Date()
         whoseTurn = .white
         board = [[Token]](repeating: [Token](repeating: .clear, count: 8), count: 8)
@@ -64,6 +70,7 @@ final class Game {
         self.white = white
         self.black = black
         self.id = id
+        self.playMode = playMode
     }
     
     func play(row: Int, column: Int, player: Player){
@@ -116,6 +123,9 @@ extension Game {
     
     private func flipLine(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool{
         guard row + dRow >= 0 && row + dRow < 8 && column + dColumn >= 0 && column + dColumn < 8 else {
+            if (playMode == .edgesAreYou){
+                return true
+            }
             return false
         }
         if board[column + dColumn][row + dRow] == .clear {
@@ -137,16 +147,22 @@ extension Game {
         if board[column][row] == check {
             return true
         }
-        // Not sure if this is an actual rule or not, but it makes sense to me, so if it isn't, I'm tweaking the rules.
-        guard board[column][row] != .clear else {
-            return false
-        }
         guard row + dRow >= 0 && row + dRow < 8 else {
+            if (playMode == .edgesAreYou){
+                return true
+            }
             return false
         }
         guard column + dColumn >= 0 && column + dColumn < 8 else {
+            if (playMode == .edgesAreYou){
+                return true
+            }
             return false
         }
+        // Not sure if this is an actual rule or not, but it makes sense to me, so if it isn't, I'm tweaking the rules.
+       guard board[column + dColumn][row + dRow] != .clear else {
+           return false
+       }
         return checkLineMatch(player: player, dRow: dRow, dColumn: dColumn, row: row + dRow, column: column + dColumn)
     }
     
@@ -159,7 +175,6 @@ extension Game {
     
     private func isValidMove(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool {
         let other = player == .white ? Token.black : Token.white
-        // TODO: Have an alternate mode where the 'hit the edge' check returns true? Could be an interesting alternate game mode.
         guard row + dRow >= 0 && row + dRow < 8 else {
             return false
         }
