@@ -134,7 +134,7 @@ extension Game {
     
     private func checkLineMatch(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool {
         let check = player == .white ? Token.white : Token.black
-        if board[row][column] == check {
+        if board[column][row] == check {
             return true
         }
         guard row + dRow >= 0 && row + dRow < 8 else {
