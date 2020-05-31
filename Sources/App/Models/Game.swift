@@ -8,9 +8,15 @@
 import Foundation
 
 final class Game {
-    var board: [[Token]]
+    enum PlayMode {
+        case normal, edgesAreYou
+    }
+    
+    private var board: [[Token]]
     var lastMove: Date
     var whoseTurn: Player
+    
+    let playMode: PlayMode
     
     let white: ChatUser
     let black: ChatUser
@@ -35,10 +41,25 @@ final class Game {
         }
     }
     var isGameOver: Bool {
-        blackCount + whiteCount == 8*8
+        if (blackCount + whiteCount == 8*8){
+            return true
+        }
+        let whiteHasMoves = getValidMoves(for: .white)
+        if (whiteHasMoves.contains(where: { (arr) -> Bool in
+            arr.contains(true)
+        })){
+            return false
+        }
+        let blackHasMoves = getValidMoves(for: .white)
+        if (blackHasMoves.contains(where: { (arr) -> Bool in
+            arr.contains(true)
+        })){
+            return false
+        }
+        return true
     }
     
-    init(white: ChatUser, black: ChatUser, id: GameConfig.ID = UUID()){
+    init(white: ChatUser, black: ChatUser, id: GameConfig.ID = UUID(), playMode: PlayMode = .edgesAreYou){
         lastMove = Date()
         whoseTurn = .white
         board = [[Token]](repeating: [Token](repeating: .clear, count: 8), count: 8)
@@ -49,12 +70,133 @@ final class Game {
         self.white = white
         self.black = black
         self.id = id
+        self.playMode = playMode
+    }
+    
+    func play(row: Int, column: Int, player: Player){
+        guard row >= 0 && row < 8 && column >= 0 && column < 8 else {
+            return
+        }
+        guard player == whoseTurn else {
+            return
+        }
+        guard isValidMove(player: player, row: row, column: column) else {
+            return
+        }
+        board[column][row] = player == .white ? .white : .black
+        // Flip any tokens that need to be flipped
+        let directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+        let res = directions.map({ (dX, dY) -> Bool in
+            flipLine(player: player, dRow: dY, dColumn: dX, row: row, column: column)
+        })
+        if (!res.contains(true)){
+            print("Error while flipping - no valid flips")
+        }
+        whoseTurn = whoseTurn == .white ? .black : .white
+        // Check - if they have no moves, skip their turn
+        let validMoves = getValidMoves(for: whoseTurn)
+        if (!validMoves.contains(where: { (arr) -> Bool in
+            arr.contains(true)
+        })){
+            whoseTurn = whoseTurn == .white ? .black : .white
+            // don't recurse - if they *also* don't have any moves, isGameOver will be true
+        }
+        lastMove = Date()
+    }
+}
+
+extension Game {
+    func getValidMoves(for player: Player, checkingTurn: Bool = false) -> [[Bool]] {
+        var result = [[Bool]](repeating: [Bool](repeating: false, count: 8), count: 8)
+        if checkingTurn && whoseTurn != player {
+            return result // not your turn, no moves available
+        }
+        for x in 0..<8{
+            for y in 0..<8{
+                if board[x][y] == .clear {
+                    result[x][y] = isValidMove(player: player, row: y, column: x)
+                }
+            }
+        }
+        return result
+    }
+    
+    private func flipLine(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool{
+        guard row + dRow >= 0 && row + dRow < 8 && column + dColumn >= 0 && column + dColumn < 8 else {
+            if (playMode == .edgesAreYou){
+                return true
+            }
+            return false
+        }
+        if board[column + dColumn][row + dRow] == .clear {
+            return false
+        }
+        let who = player == .white ? Token.white : Token.black
+        if board[column + dColumn][row + dRow] == who {
+            return true
+        }
+        if (flipLine(player: player, dRow: dRow, dColumn: dColumn, row: row + dRow, column: column + dColumn)){
+            board[column + dColumn][row + dRow] = who
+            return true
+        }
+        return false
+    }
+    
+    private func checkLineMatch(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool {
+        let check = player == .white ? Token.white : Token.black
+        if board[column][row] == check {
+            return true
+        }
+        guard row + dRow >= 0 && row + dRow < 8 else {
+            if (playMode == .edgesAreYou){
+                return true
+            }
+            return false
+        }
+        guard column + dColumn >= 0 && column + dColumn < 8 else {
+            if (playMode == .edgesAreYou){
+                return true
+            }
+            return false
+        }
+        // Not sure if this is an actual rule or not, but it makes sense to me, so if it isn't, I'm tweaking the rules.
+       guard board[column + dColumn][row + dRow] != .clear else {
+           return false
+       }
+        return checkLineMatch(player: player, dRow: dRow, dColumn: dColumn, row: row + dRow, column: column + dColumn)
+    }
+    
+    private func isValidMove(player: Player, row: Int, column: Int) -> Bool {
+        let directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+        return directions.contains(where: { (dX, dY) -> Bool in
+            isValidMove(player: player, dRow: dY, dColumn: dX, row: row, column: column)
+        })
+    }
+    
+    private func isValidMove(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool {
+        let other = player == .white ? Token.black : Token.white
+        guard row + dRow >= 0 && row + dRow < 8 else {
+            return false
+        }
+        guard column + dColumn >= 0 && column + dColumn < 8 else {
+            return false
+        }
+        guard board[column + dColumn][row + dRow] == other else {
+            return false
+        }
+        guard row + dRow + dRow >= 0 && row + dRow + dRow < 8 else {
+            return false
+        }
+        guard column + dColumn + dColumn >= 0 && column + dColumn + dColumn < 8 else {
+            return false
+        }
+        return checkLineMatch(player: player, dRow: dRow, dColumn: dColumn, row: row, column: column)
     }
 }
 
 extension Game: Codable {
     fileprivate enum CodingKeys: String, CodingKey {
-        case board, lastMove, whoseTurn, white, black, id, whiteCount, blackCount, isGameOver
+        case board, lastMove, whoseTurn, white, black, id, whiteCount, blackCount, isGameOver, validMovesWhite, validMovesBlack
     }
     
     func encode(to encoder: Encoder) throws {
@@ -68,6 +210,8 @@ extension Game: Codable {
         try container.encode(whiteCount, forKey: .whiteCount)
         try container.encode(blackCount, forKey: .blackCount)
         try container.encode(isGameOver, forKey: .isGameOver)
+        try container.encode(getValidMoves(for: .white, checkingTurn: true), forKey: .validMovesWhite)
+        try container.encode(getValidMoves(for: .black, checkingTurn: true), forKey: .validMovesBlack)
     }
     
     convenience init(from decoder: Decoder) throws {

@@ -11,7 +11,11 @@ import Ink
 
 class ChatController {
     private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
+    private let encoder: JSONEncoder = {
+        let res = JSONEncoder()
+        res.dateEncodingStrategy = .millisecondsSince1970
+        return res
+    }()
     private let markdownParser = MarkdownParser()
     private static var rooms: [String: ChatRoom] = [:]
     
@@ -181,9 +185,12 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                     print("Accept: 'from' user is not defined")
                     return
                 }
-                // TODO: Check if it's a valid move, other BOL stuff
                 let isUserWhite = game.white.username == user.username
-                game.board[x][y] = isUserWhite ? .white : .black
+                guard game.whoseTurn == (isUserWhite ? .white : .black) else {
+                    print("User attempted to play when it wasn't their turn")
+                    return
+                }
+                game.play(row: y, column: x, player: isUserWhite ? .white : .black)
                 room.queue.send(.gameUpdate(game: game))
             }
         }
