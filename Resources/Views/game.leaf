@@ -94,7 +94,7 @@
 	console.log('Connecting to ' + url)
 	console.groupEnd();
 	var socket = new WebSocket(url);
-	var previousBoard = [[]]
+	var previousBoard = new Array(8).fill(new Array(8).fill('clear'));
 
 	socket.onmessage = (e) => {
 		const res = JSON.parse(e.data);
@@ -109,32 +109,7 @@
 					if (whoAmI){
 						whoAmI.src = res.payload.game.white.username == username ? 'images/C-W.gif' : 'images/C-B.gif';
 					}
-
-					if (res.payload.game.board){
-						previousBoard = res.payload.game.board;
-						for (const x of [0,1,2,3,4,5,6,7]){
-							for (const y of [0,1,2,3,4,5,6,7]){
-								const image = document.getElementById(`${x}_${y}`).querySelector('img');
-								switch (res.payload.game.board[x][y]){
-									case 'white':
-										image.src = "images/C-W.gif";
-										break;
-									case 'black':
-										image.src = "images/C-B.gif";
-										break;
-									case 'error':
-										image.src = "images/E.gif";
-										break;
-									default:
-										image.src = "images/C.gif";
-										image.onclick = () => { play(x,y); }
-										break;
-								}
-							}
-						}
-						document.getElementById('whiteScore').innerText = res.payload.game.whiteCount;
-						document.getElementById('blackScore').innerText = res.payload.game.blackCount;
-					}
+					updateGameBoard(res.payload.game, res.payload.game.white.username == username);
 				}
 				break;
 			}
@@ -152,59 +127,7 @@
 				break;
 			case 'gameUpdate':
 				if (res.game.board){
-					let validMoves = res.game.white.username == username ? res.game.validMovesWhite : res.game.validMovesBlack;
-					for (const x of [0,1,2,3,4,5,6,7]){
-						for (const y of [0,1,2,3,4,5,6,7]){
-							const image = document.getElementById(`${x}_${y}`).querySelector('img');
-							image.classList.remove('valid');
-							image.onclick = null;
-							if (validMoves[x][y]){
-								image.classList.add('valid');
-								image.onclick = () => { play(x, y) }
-							}
-							let imageurl = image.src;
-							let didChange = false;
-							if (res.game.board[x][y] != previousBoard[x][y]){
-								didChange = true;
-								switch (res.game.board[x][y]){
-									case 'white':
-										imageurl = previousBoard[x][y] == 'black' ? "images/B-W.gif" : "images/C-W.gif";
-										break;
-									case 'black':
-										imageurl = previousBoard[x][y] == 'white' ? "images/W-B.gif" : "images/C-B.gif";
-										break;
-									case 'clear':
-										if (previousBoard[x][y] == 'white'){
-											imageurl = "images/W-C.gif"
-										} else if (previousBoard[x][y] == 'black'){
-											imageurl = "images/B-C.gif"
-										} else {
-											imageurl = "images/C.gif";
-										}
-										break;
-									case 'error':
-										imageurl = "images/E.gif";
-										break;
-								}
-							}
-							if (didChange) {
-								imageurl = imageurl + '?d=' + (new Date()).getTime();
-								image.src = imageurl;
-							}
-							switch (res.game.board[x][y]){
-								case 'white':
-									break;
-								case 'black':
-									break;
-							}
-						}
-					}
-					document.getElementById('whiteScore').innerText = res.game.whiteCount;
-					document.getElementById('blackScore').innerText = res.game.blackCount;
-					if (res.game.isGameOver){
-						document.getElementById('gameHeader').innerHTML += `<div class="row mt-2"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
-					}
-					previousBoard = res.game.board;
+					updateGameBoard(res.game, res.game.white.username == username);
 				}
 				break;	
 			case 'invite': 
@@ -261,6 +184,63 @@
 		var text = JSON.stringify(command);
 		socket.send(text);
 		return false;
+	}
+
+	function updateGameBoard(game, isWhite){
+		let validMoves = isWhite ? game.validMovesWhite : game.validMovesBlack;
+		if (!game.board) return;
+		for (const x of [0,1,2,3,4,5,6,7]){
+			for (const y of [0,1,2,3,4,5,6,7]){
+				const image = document.getElementById(`${x}_${y}`).querySelector('img');
+				image.classList.remove('valid');
+				image.onclick = null;
+				if (validMoves[x][y]){
+					image.classList.add('valid');
+					image.onclick = () => { play(x, y) }
+				}
+				let imageurl = image.src;
+				let didChange = false;
+				if (game.board[x][y] != previousBoard[x][y]){
+					didChange = true;
+					switch (game.board[x][y]){
+						case 'white':
+							imageurl = previousBoard[x][y] == 'black' ? "images/B-W.gif" : "images/C-W.gif";
+							break;
+						case 'black':
+							imageurl = previousBoard[x][y] == 'white' ? "images/W-B.gif" : "images/C-B.gif";
+							break;
+						case 'clear':
+							if (previousBoard[x][y] == 'white'){
+								imageurl = "images/W-C.gif"
+							} else if (previousBoard[x][y] == 'black'){
+								imageurl = "images/B-C.gif"
+							} else {
+								imageurl = "images/C.gif";
+							}
+							break;
+						case 'error':
+							imageurl = "images/E.gif";
+							break;
+					}
+				}
+				if (didChange) {
+					imageurl = imageurl + '?d=' + (new Date()).getTime();
+					image.src = imageurl;
+				}
+				switch (game.board[x][y]){
+					case 'white':
+						break;
+					case 'black':
+						break;
+				}
+			}
+		}
+		document.getElementById('whiteScore').innerText = game.whiteCount;
+		document.getElementById('blackScore').innerText = game.blackCount;
+		if (game.isGameOver){
+			document.getElementById('gameHeader').innerHTML += `<div class="row mt-2"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
+		}
+		previousBoard = game.board;
 	}
 </script> 
 #endexport
