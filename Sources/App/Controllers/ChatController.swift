@@ -181,8 +181,12 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                     print("Accept: 'from' user is not defined")
                     return
                 }
-                // TODO: Check if it's a valid move, other BOL stuff
                 let isUserWhite = game.white.username == user.username
+                guard game.whoseTurn == (isUserWhite ? .white : .black) else {
+                    print("User attempted to play when it wasn't their turn")
+                    return
+                }
+                // TODO: Check if it's a valid move, other BOL stuff
                 game.board[x][y] = isUserWhite ? .white : .black
                 room.queue.send(.gameUpdate(game: game))
             }
