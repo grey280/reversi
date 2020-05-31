@@ -106,7 +106,7 @@ extension Game {
 
 extension Game: Codable {
     fileprivate enum CodingKeys: String, CodingKey {
-        case board, lastMove, whoseTurn, white, black, id, whiteCount, blackCount, isGameOver
+        case board, lastMove, whoseTurn, white, black, id, whiteCount, blackCount, isGameOver, validMovesWhite, validMovesBlack
     }
     
     func encode(to encoder: Encoder) throws {
@@ -120,6 +120,8 @@ extension Game: Codable {
         try container.encode(whiteCount, forKey: .whiteCount)
         try container.encode(blackCount, forKey: .blackCount)
         try container.encode(isGameOver, forKey: .isGameOver)
+        try container.encode(getValidMoves(for: .white), forKey: .validMovesWhite)
+        try container.encode(getValidMoves(for: .black), forKey: .validMovesBlack)
     }
     
     convenience init(from decoder: Decoder) throws {
