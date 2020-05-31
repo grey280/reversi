@@ -52,6 +52,29 @@ final class Game {
     }
 }
 
+extension Game {
+    private func isValidMove(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool {
+        let other = player == .white ? Token.black : Token.white
+        // TODO: Have an alternate mode where the 'hit the edge' check returns true? Could be an interesting alternate game mode.
+        if (row + dRow) < 0 || (row + dRow) > 7{
+            return false
+        }
+        if (column + dColumn) < 0 || (column + dColumn) > 7 {
+            return false
+        }
+        if board[column + dColumn][row + dRow] != other {
+            return false
+        }
+        if (row + dRow + dRow) < 0 || (row + dRow + dRow) > 7 {
+            return false
+        }
+        if (column + dColumn + dColumn) < 0 || (column + dColumn + dColumn) > 7 {
+            return false
+        }
+        return isValidMove(player: player, dRow: dRow, dColumn: dColumn, row: row + dRow + dRow, column: column + dColumn + dColumn)
+    }
+}
+
 extension Game: Codable {
     fileprivate enum CodingKeys: String, CodingKey {
         case board, lastMove, whoseTurn, white, black, id, whiteCount, blackCount, isGameOver
