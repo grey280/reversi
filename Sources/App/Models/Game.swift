@@ -61,10 +61,7 @@ extension Game {
         for x in 0..<8{
             for y in 0..<8{
                 if board[x][y] == .clear {
-                    let directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
-                    result[x][y] = directions.contains(where: { (dX, dY) -> Bool in
-                        isValidMove(player: player, dRow: dY, dColumn: dX, row: y, column: x)
-                    })
+                    result[x][y] = isValidMove(player: player, row: y, column: x)
                 }
             }
         }
@@ -83,6 +80,13 @@ extension Game {
             return false
         }
         return checkLineMatch(player: player, dRow: dRow, dColumn: dColumn, row: row + dRow, column: column + dColumn)
+    }
+    
+    private func isValidMove(player: Player, row: Int, column: Int) -> Bool {
+        let directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+        return directions.contains(where: { (dX, dY) -> Bool in
+            isValidMove(player: player, dRow: dY, dColumn: dX, row: row, column: column)
+        })
     }
     
     private func isValidMove(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool {
