@@ -11,7 +11,11 @@ import Ink
 
 class ChatController {
     private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
+    private let encoder: JSONEncoder = {
+        let res = JSONEncoder()
+        res.dateEncodingStrategy = .millisecondsSince1970
+        return res
+    }()
     private let markdownParser = MarkdownParser()
     private static var rooms: [String: ChatRoom] = [:]
     
