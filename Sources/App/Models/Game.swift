@@ -65,6 +65,29 @@ final class Game {
         self.black = black
         self.id = id
     }
+    
+    func play(row: Int, column: Int, player: Player){
+        guard row >= 0 && row < 8 && column >= 0 && column < 8 else {
+            return
+        }
+        guard player == whoseTurn else {
+            return
+        }
+        guard isValidMove(player: player, row: row, column: column) else {
+            return
+        }
+        board[column][row] = player == .white ? .white : .black
+        // TODO: Flip any tokens that need to be flipped!
+        whoseTurn = whoseTurn == .white ? .black : .white
+        // Check - if they have no moves, skip their turn
+        let validMoves = getValidMoves(for: whoseTurn)
+        if (!validMoves.contains(where: { (arr) -> Bool in
+            arr.contains(true)
+        })){
+            whoseTurn = whoseTurn == .white ? .black : .white
+            // don't recurse - if they *also* don't have any moves, isGameOver will be true
+        }
+    }
 }
 
 extension Game {
