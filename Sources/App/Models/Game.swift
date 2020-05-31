@@ -53,6 +53,20 @@ final class Game {
 }
 
 extension Game {
+    private func checkLineMatch(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool {
+        let check = player == .white ? Token.white : Token.black
+        if board[row][column] == check {
+            return true
+        }
+        if (row + dRow < 0) || (row + dRow > 7){
+            return false
+        }
+        if (column + dColumn < 0) || (column + dColumn > 7){
+            return false
+        }
+        return checkLineMatch(player: player, dRow: dRow, dColumn: dColumn, row: row + dRow, column: column + dColumn)
+    }
+    
     private func isValidMove(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool {
         let other = player == .white ? Token.black : Token.white
         // TODO: Have an alternate mode where the 'hit the edge' check returns true? Could be an interesting alternate game mode.
