@@ -35,7 +35,22 @@ final class Game {
         }
     }
     var isGameOver: Bool {
-        blackCount + whiteCount == 8*8
+        if (blackCount + whiteCount == 8*8){
+            return true
+        }
+        let whiteHasMoves = getValidMoves(for: .white)
+        if (whiteHasMoves.contains(where: { (arr) -> Bool in
+            arr.contains(true)
+        })){
+            return false
+        }
+        let blackHasMoves = getValidMoves(for: .white)
+        if (blackHasMoves.contains(where: { (arr) -> Bool in
+            arr.contains(true)
+        })){
+            return false
+        }
+        return true
     }
     
     init(white: ChatUser, black: ChatUser, id: GameConfig.ID = UUID()){
