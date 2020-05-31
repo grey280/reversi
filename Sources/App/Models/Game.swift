@@ -70,9 +70,9 @@ final class Game {
 extension Game {
     func getValidMoves(for player: Player) -> [[Bool]] {
         var result = [[Bool]](repeating: [Bool](repeating: false, count: 8), count: 8)
-        if whoseTurn != player {
-            return result // not your turn, no moves available
-        }
+//        if whoseTurn != player {
+//            return result // not your turn, no moves available
+//        }
         for x in 0..<8{
             for y in 0..<8{
                 if board[x][y] == .clear {
