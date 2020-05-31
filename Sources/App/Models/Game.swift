@@ -87,6 +87,7 @@ final class Game {
             whoseTurn = whoseTurn == .white ? .black : .white
             // don't recurse - if they *also* don't have any moves, isGameOver will be true
         }
+        lastMove = Date()
     }
 }
 
