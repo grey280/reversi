@@ -20,7 +20,8 @@
 		transition: border-color .5s ease-in-out;
 	}
 	img.valid{
-		border-color: black;
+		cursor:pointer;
+		/*border-color: black;*/
 	}
 	img.valid:hover {
 		border-color: red;
@@ -61,6 +62,9 @@
 						#endfor
 					</tr>
 				</table>
+			</div>
+			<div class="card-footer">
+				<p>Time since last move: <strong id="timer">0:00</strong>
 			</div>
 		</div>
 	</div>
@@ -186,6 +190,8 @@
 		return false;
 	}
 
+	var timer;
+
 	function updateGameBoard(game, isWhite){
 		let validMoves = isWhite ? game.validMovesWhite : game.validMovesBlack;
 		if (!game.board) return;
@@ -241,6 +247,17 @@
 			document.getElementById('gameHeader').innerHTML += `<div class="row mt-2"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
 		}
 		previousBoard = game.board;
+		if (timer){
+			clearInterval(timer);
+		}
+		timer = setInterval(() => {
+			let now = new Date();
+			// let elapsedMs = now.getTime() - new Date(game.lastMove).getTime();
+			let elapsedMs = now.getTime() - game.lastMove;
+			let minutes = Math.floor(elapsedMs / (60 * 1_000));
+			let seconds = Math.floor((elapsedMs % (60 * 1_000)) / 1_000);
+			document.getElementById('timer').innerText = `${minutes}:${seconds > 9 ? '' : '0'}${seconds}`;
+		}, 1_000);
 	}
 </script> 
 #endexport
