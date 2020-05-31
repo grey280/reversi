@@ -8,6 +8,7 @@
 import Vapor
 import OpenCombine
 import Ink
+import NIO
 
 class ChatController {
     private let decoder = JSONDecoder()
@@ -84,8 +85,9 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
         }
     }
     
-    
     func socket(_ req: Request, _ ws: WebSocket) -> () {
+        ws.pingInterval = TimeAmount.seconds(10)
+        
         print("Socket connected")
         var user: ChatUser? = nil
         var inRoom: String? = nil
