@@ -137,6 +137,10 @@ extension Game {
         if board[column][row] == check {
             return true
         }
+        // Not sure if this is an actual rule or not, but it makes sense to me, so if it isn't, I'm tweaking the rules.
+        guard board[column][row] != .clear else {
+            return false
+        }
         guard row + dRow >= 0 && row + dRow < 8 else {
             return false
         }
