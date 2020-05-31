@@ -77,7 +77,14 @@ final class Game {
             return
         }
         board[column][row] = player == .white ? .white : .black
-        // TODO: Flip any tokens that need to be flipped!
+        // Flip any tokens that need to be flipped
+        let directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+        let res = directions.map({ (dX, dY) -> Bool in
+            flipLine(player: player, dRow: dY, dColumn: dX, row: row, column: column)
+        })
+        if (!res.contains(true)){
+            print("Error while flipping - no valid flips")
+        }
         whoseTurn = whoseTurn == .white ? .black : .white
         // Check - if they have no moves, skip their turn
         let validMoves = getValidMoves(for: whoseTurn)
