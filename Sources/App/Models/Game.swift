@@ -42,20 +42,24 @@ final class Game {
     }
     var isGameOver: Bool {
         if (blackCount + whiteCount == 8*8){
+            print("game is over because all spaces are filled")
             return true
         }
         let whiteHasMoves = getValidMoves(for: .white)
         if (whiteHasMoves.contains(where: { (arr) -> Bool in
             arr.contains(true)
         })){
+            print("game isn't over - white has moves")
             return false
         }
-        let blackHasMoves = getValidMoves(for: .white)
+        let blackHasMoves = getValidMoves(for: .black)
         if (blackHasMoves.contains(where: { (arr) -> Bool in
             arr.contains(true)
         })){
+            print("game isn't over - black has moves")
             return false
         }
+        print("game is over - nobody has moves")
         return true
     }
     
