@@ -107,6 +107,24 @@ extension Game {
         return result
     }
     
+    private func flipLine(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool{
+        guard row + dRow >= 0 && row + dRow < 8 && column + dColumn >= 0 && column + dColumn < 8 else {
+            return false
+        }
+        if board[column + dColumn][row + dRow] == .clear {
+            return false
+        }
+        let who = player == .white ? Token.white : Token.black
+        if board[column + dColumn][row + dRow] == who {
+            return true
+        }
+        if (flipLine(player: player, dRow: dRow, dColumn: dColumn, row: row + dRow, column: column + dColumn)){
+            board[column + dColumn][row + dRow] = who
+            return true
+        }
+        return false
+    }
+    
     private func checkLineMatch(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool {
         let check = player == .white ? Token.white : Token.black
         if board[row][column] == check {
