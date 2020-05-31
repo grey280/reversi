@@ -8,7 +8,7 @@
 import Foundation
 
 final class Game {
-    var board: [[Token]]
+    private var board: [[Token]]
     var lastMove: Date
     var whoseTurn: Player
     

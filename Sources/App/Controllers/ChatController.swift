@@ -186,8 +186,7 @@ You can format your text using [Markdown](https://daringfireball.net/projects/ma
                     print("User attempted to play when it wasn't their turn")
                     return
                 }
-                // TODO: Check if it's a valid move, other BOL stuff
-                game.board[x][y] = isUserWhite ? .white : .black
+                game.play(row: y, column: x, player: isUserWhite ? .white : .black)
                 room.queue.send(.gameUpdate(game: game))
             }
         }
