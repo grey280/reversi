@@ -171,7 +171,8 @@ extension Game {
         guard column + dColumn + dColumn >= 0 && column + dColumn + dColumn < 8 else {
             return false
         }
-        return isValidMove(player: player, dRow: dRow, dColumn: dColumn, row: row + dRow + dRow, column: column + dColumn + dColumn)
+        return checkLineMatch(player: player, dRow: dRow, dColumn: dColumn, row: row, column: column)
+//        return isValidMove(player: player, dRow: dRow, dColumn: dColumn, row: row + dRow + dRow, column: column + dColumn + dColumn)
     }
 }
 
