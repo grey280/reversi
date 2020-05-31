@@ -256,8 +256,10 @@
 		}
 		document.getElementById('whiteScore').innerText = game.whiteCount;
 		document.getElementById('blackScore').innerText = game.blackCount;
+		const gameOverMessage = document.getElementById('gameOverMessage');
+		if (gameOverMessage) gameOverMessage.remove();
 		if (game.isGameOver){
-			document.getElementById('gameHeader').innerHTML += `<div class="row mt-2"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
+			document.getElementById('gameHeader').innerHTML += `<div class="row mt-2" id="gameOverMessage"><div class="col"><div class="alert alert-warning"><h2>Game over!</h2></div></div></div>`
 		}
 		previousBoard = game.board;
 		if (timer){
