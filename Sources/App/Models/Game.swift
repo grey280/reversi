@@ -99,11 +99,11 @@ final class Game {
 }
 
 extension Game {
-    func getValidMoves(for player: Player) -> [[Bool]] {
+    func getValidMoves(for player: Player, checkingTurn: Bool = false) -> [[Bool]] {
         var result = [[Bool]](repeating: [Bool](repeating: false, count: 8), count: 8)
-//        if whoseTurn != player {
-//            return result // not your turn, no moves available
-//        }
+        if checkingTurn && whoseTurn != player {
+            return result // not your turn, no moves available
+        }
         for x in 0..<8{
             for y in 0..<8{
                 if board[x][y] == .clear {
@@ -172,7 +172,6 @@ extension Game {
             return false
         }
         return checkLineMatch(player: player, dRow: dRow, dColumn: dColumn, row: row, column: column)
-//        return isValidMove(player: player, dRow: dRow, dColumn: dColumn, row: row + dRow + dRow, column: column + dColumn + dColumn)
     }
 }
 
@@ -192,8 +191,8 @@ extension Game: Codable {
         try container.encode(whiteCount, forKey: .whiteCount)
         try container.encode(blackCount, forKey: .blackCount)
         try container.encode(isGameOver, forKey: .isGameOver)
-        try container.encode(getValidMoves(for: .white), forKey: .validMovesWhite)
-        try container.encode(getValidMoves(for: .black), forKey: .validMovesBlack)
+        try container.encode(getValidMoves(for: .white, checkingTurn: true), forKey: .validMovesWhite)
+        try container.encode(getValidMoves(for: .black, checkingTurn: true), forKey: .validMovesBlack)
     }
     
     convenience init(from decoder: Decoder) throws {
