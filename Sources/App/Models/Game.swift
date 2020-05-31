@@ -53,6 +53,21 @@ final class Game {
 }
 
 extension Game {
+    func getValidMoves(for player: Player) -> [[Bool]] {
+        var result = [[Bool]](repeating: [Bool](repeating: false, count: 8), count: 8)
+        for x in 0..<8{
+            for y in 0..<8{
+                if board[x][y] == .clear {
+                    let directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+                    result[x][y] = directions.contains(where: { (dX, dY) -> Bool in
+                        isValidMove(player: player, dRow: dY, dColumn: dX, row: y, column: x)
+                    })
+                }
+            }
+        }
+        return result
+    }
+    
     private func checkLineMatch(player: Player, dRow: Int, dColumn: Int, row: Int, column: Int) -> Bool {
         let check = player == .white ? Token.white : Token.black
         if board[row][column] == check {
