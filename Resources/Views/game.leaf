@@ -13,6 +13,18 @@
 		border-left: 2px solid black;
 		border-bottom: 2px solid black;
 	}
+	table img {
+		border-width: 1px;
+		border-color: transparent;
+		border-style: solid;
+		transition: border-color .5s ease-in-out;
+	}
+	img.valid{
+		border-color: black;
+	}
+	img.valid:hover {
+		border-color: red;
+	}
 </style>
 #endexport
 #export("body"):
@@ -140,9 +152,16 @@
 				break;
 			case 'gameUpdate':
 				if (res.game.board){
+					let validMoves = res.game.white.username == username ? res.game.validMovesWhite : res.game.validMovesBlack;
 					for (const x of [0,1,2,3,4,5,6,7]){
 						for (const y of [0,1,2,3,4,5,6,7]){
 							const image = document.getElementById(`${x}_${y}`).querySelector('img');
+							image.classList.remove('valid');
+							image.onclick = null;
+							if (validMoves[x][y]){
+								image.classList.add('valid');
+								image.onclick = () => { play(x, y) }
+							}
 							let imageurl = image.src;
 							let didChange = false;
 							if (res.game.board[x][y] != previousBoard[x][y]){
@@ -150,11 +169,9 @@
 								switch (res.game.board[x][y]){
 									case 'white':
 										imageurl = previousBoard[x][y] == 'black' ? "images/B-W.gif" : "images/C-W.gif";
-										image.onclick = null;
 										break;
 									case 'black':
 										imageurl = previousBoard[x][y] == 'white' ? "images/W-B.gif" : "images/C-B.gif";
-										image.onclick = null;
 										break;
 									case 'clear':
 										if (previousBoard[x][y] == 'white'){
@@ -164,11 +181,9 @@
 										} else {
 											imageurl = "images/C.gif";
 										}
-										image.onclick = () => { play(x, y); }
 										break;
 									case 'error':
 										imageurl = "images/E.gif";
-										image.onclick = null;
 										break;
 								}
 							}
